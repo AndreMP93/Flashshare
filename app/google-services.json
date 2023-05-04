@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "21656723464",
+    "project_id": "flashshare-4c41c",
+    "storage_bucket": "flashshare-4c41c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:21656723464:android:a02a891cf3af3bf45fb1bd",
+        "android_client_info": {
+          "package_name": "com.example.flashshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "21656723464-4pcb089lhs7bbvg4al0ibvq7fjvejahh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpBK1K1jwstuWVac_qqc2gDk0qQ0dRV5U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "21656723464-4pcb089lhs7bbvg4al0ibvq7fjvejahh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
