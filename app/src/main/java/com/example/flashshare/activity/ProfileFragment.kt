@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.flashshare.R
 import com.example.flashshare.databinding.FragmentProfileBinding
 import com.example.flashshare.model.ResultModel
@@ -57,6 +58,9 @@ class ProfileFragment : Fragment() {
                         binding!!.nameText.text = it.data.name
                         binding!!.usernameText.text = it.data.username
                         binding!!.bioText.text = it.data.bio
+                        if(it.data.urlPhotoProfile !=null){
+                            Glide.with(this).load(it.data.urlPhotoProfile).into(binding!!.imageAvatarProfile)
+                        }
                     }
 
 

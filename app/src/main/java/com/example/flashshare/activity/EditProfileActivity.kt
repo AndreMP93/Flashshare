@@ -1,9 +1,14 @@
 package com.example.flashshare.activity
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.flashshare.R
 import com.example.flashshare.databinding.ActivityEditProfileBinding
 import com.example.flashshare.model.ResultModel
@@ -15,6 +20,14 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditProfileBinding
     private lateinit var viewModel: EditProfileViewModel
     private lateinit var user: UserModel
+    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let { selectedImageUri ->
+            println("TESTE? $selectedImageUri")
+            viewModel.savePhotoProfile(user, selectedImageUri)
+            binding.imageAvatarProfile.setImageURI(selectedImageUri)
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,11 +48,21 @@ class EditProfileActivity : AppCompatActivity() {
             viewModel.update(user)
         }
 
+        binding.textChangePhoto.setOnClickListener {
+            pickImage.launch("image/*")
+        }
+
 
         binding.editProfileToolbar.mainToolbar.setTitle(R.string.edit_profile)
         setSupportActionBar(binding.editProfileToolbar.mainToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+    }
+
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return false
     }
 
     private fun observes(){
@@ -51,6 +74,9 @@ class EditProfileActivity : AppCompatActivity() {
                     binding.nameTextInput.setText(it.data.name)
                     binding.usernameTextInput.setText(it.data.username)
                     binding.bioUserTextInput.setText(it.data.bio)
+                    if (it.data.urlPhotoProfile != null){
+                        Glide.with(this).load(it.data.urlPhotoProfile).into(binding.imageAvatarProfile)
+                    }
                 }
                 is ResultModel.Loading -> Toast.makeText(applicationContext, "Loading!!!", Toast.LENGTH_LONG).show()
                 is ResultModel.Error -> {
@@ -70,5 +96,9 @@ class EditProfileActivity : AppCompatActivity() {
                 is ResultModel.Error -> Toast.makeText(applicationContext, it.message, Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    companion object{
+        private val SELECT_GALLERY = 200
     }
 }

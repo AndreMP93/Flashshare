@@ -1,5 +1,6 @@
 package com.example.flashshare.model
 
+import com.example.flashshare.service.AppConstants
 import com.google.firebase.firestore.Exclude
 
 class UserModel() {
@@ -31,6 +32,18 @@ class UserModel() {
         this.email = email
         this.bio = bio
         this.username = username
-        this.username = urlPhoto
+        this.urlPhotoProfile = urlPhoto
+    }
+
+    fun toMap(): Map<String, Any?>{
+        val map = hashMapOf<String, Any?>()
+        map[AppConstants.FIRESTORE.ID_KEY] = this.id
+        map[AppConstants.FIRESTORE.NAME_KEY] = this.name
+        map[AppConstants.FIRESTORE.EMAIL_KEY] = this.email
+        map[AppConstants.FIRESTORE.USERNAME_KEY] = this.username ?: ""
+        map[AppConstants.FIRESTORE.BIO_KEY] = this.bio ?: ""
+        map[AppConstants.FIRESTORE.URL_PHOTO_KEY] = this.urlPhotoProfile ?: ""
+
+        return map
     }
 }

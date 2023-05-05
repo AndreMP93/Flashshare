@@ -1,6 +1,7 @@
 package com.example.flashshare.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,6 +23,9 @@ class EditProfileViewModel(application: Application): AndroidViewModel(applicati
     private val _loadProcess = MutableLiveData<ResultModel<UserModel>>()
     val loadProcess: LiveData<ResultModel<UserModel>> = _loadProcess
 
+    private val _savePhotoProcess = MutableLiveData<ResultModel<UserModel>>()
+    val savePhotoProcess: LiveData<ResultModel<UserModel>> = _savePhotoProcess
+
 
     fun getUserData(){
         viewModelScope.launch {
@@ -37,6 +41,16 @@ class EditProfileViewModel(application: Application): AndroidViewModel(applicati
     fun update(user: UserModel){
         viewModelScope.launch {
             _updateProcess.value = userRepository.updateUser(user)
+        }
+    }
+
+    fun savePhotoProfile(user: UserModel, image: Uri){
+        viewModelScope.launch {
+            val result = userRepository.savePhotoProfile(user, image)
+            _savePhotoProcess.value = result
+            if(result is ResultModel.Success){
+                userRepository.updateUser(result.data)
+            }
         }
     }
 }

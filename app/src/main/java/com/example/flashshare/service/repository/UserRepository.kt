@@ -1,15 +1,18 @@
 package com.example.flashshare.service.repository
 
+import android.net.Uri
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.model.UserModel
 import com.example.flashshare.service.AppConstants
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlin.coroutines.suspendCoroutine
 
 class UserRepository{
 
     private val db = Firebase.firestore
+    private val storage = Firebase.storage
 
     suspend fun addUser(user: UserModel): ResultModel<Unit> {
         return suspendCoroutine {continuation ->
@@ -60,12 +63,38 @@ class UserRepository{
             try {
                 db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
                     .document(user.id)
-                    .set(user)
+                    .update(user.toMap())
                     .addOnSuccessListener {
                         continuation.resumeWith(Result.success(ResultModel.Success(Unit)))
                     }
                     .addOnFailureListener { e ->
                         continuation.resumeWith(Result.success(ResultModel.Error(e.message)))
+                    }
+            }catch (e: Exception){
+                continuation.resumeWith(Result.success(ResultModel.Error(e.message)))
+            }
+        }
+    }
+
+    suspend fun savePhotoProfile(user: UserModel, image: Uri): ResultModel<UserModel>{
+        return suspendCoroutine { continuation ->
+            try {
+                val storageRef = storage.reference
+                    .child(AppConstants.STORAGE.IMAGE_PATH)
+                    .child(AppConstants.STORAGE.PROFILE_PATH)
+                    .child("${user.id}.jpeg")
+
+                storageRef.putFile(image)
+                    .addOnSuccessListener {
+                        it.storage.downloadUrl.addOnCompleteListener {uri ->
+                            println("TESTE: ${uri.result}")
+                            user.urlPhotoProfile = uri.result.toString()
+                            continuation.resumeWith(Result.success(ResultModel.Success(user)))
+                        }
+
+                    }
+                    .addOnFailureListener {
+                        continuation.resumeWith(Result.success(ResultModel.Error(it.message)))
                     }
             }catch (e: Exception){
                 continuation.resumeWith(Result.success(ResultModel.Error(e.message)))

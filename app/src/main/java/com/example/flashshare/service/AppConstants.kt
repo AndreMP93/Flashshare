@@ -10,5 +10,17 @@ class AppConstants private constructor(){
 
     object FIRESTORE {
         const val USER_COLLECTION = "users"
+        const val ID_KEY = "id"
+        const val NAME_KEY = "name"
+        const val EMAIL_KEY = "email"
+        const val BIO_KEY = "bio"
+        const val USERNAME_KEY = "username"
+        const val URL_PHOTO_KEY = "urlPhotoProfile"
+    }
+
+    object STORAGE {
+        const val IMAGE_PATH = "images"
+        const val PROFILE_PATH = "profile"
+        const val POSTS_PATH = "posts"
     }
 }

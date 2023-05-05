@@ -28,8 +28,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imageAvatarProfile"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:contentDescription="@string/profile"
                 android:src="@drawable/ic_avatar_default" />
 
@@ -37,6 +37,7 @@
                 android:id="@+id/textChangePhoto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:gravity="center"
                 android:text="@string/change_photo"
                 android:textColor="@color/purple_700"
@@ -100,6 +101,7 @@
                 android:id="@+id/updateButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:backgroundTint="@color/gray_500"
                 android:text="@string/save_button"
                 android:textColor="@color/black"
