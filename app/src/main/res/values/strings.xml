@@ -25,4 +25,16 @@
     <string name="bio">Bio</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="save_button">Savar</string>
+
+    <string name="search_user">Buscar Usuários</string>
+
+    <string name="error_get_user_data">Falha ao carregar os dados do Usuário</string>
+    <string name="error_save_user_data">Falha ao salvar os dados do Usuário</string>
+    <string name="error_login">Não foi possivel realizar o login, tente novamente mais tarde!</string>
+    <string name="error_register">Não foi possivel cadastrar o usuário, tente novamente mais tarde!</string>
+    <string name="error_message">Falha inesperada, tente novamente mais tarde!</string>
+
+    <string name="success_save_user_data">Os dados do Usuário foramsalvos</string>
+    <string name="success_login">Os dados do Usuário foram salvos</string>
+    <string name="success_register">O Usuário cadastrado com sucesso</string>
 </resources>

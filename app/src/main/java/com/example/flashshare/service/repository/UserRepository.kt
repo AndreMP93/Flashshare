@@ -42,6 +42,7 @@ class UserRepository{
                     .addOnSuccessListener { document ->
                         if (document.exists()) {
                             val user = document.toObject(UserModel::class.java)
+                            println("NAME> ${document.data}")
                             if(user!=null){
 
                                 continuation.resumeWith(Result.success(ResultModel.Success(user)))
@@ -99,6 +100,27 @@ class UserRepository{
             }catch (e: Exception){
                 continuation.resumeWith(Result.success(ResultModel.Error(e.message)))
             }
+        }
+    }
+
+    suspend fun getUsers(text: String): ResultModel<List<UserModel>>{
+        return suspendCoroutine {continuation ->
+            val query = db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
+                .orderBy(AppConstants.FIRESTORE.NAME_UPPERCASE)
+                .startAt(text)
+                .endAt(text + "\uf8ff")
+
+            query.get()
+                .addOnSuccessListener {
+                    val listUsers = mutableListOf<UserModel>()
+                    for (doc in it.documents){
+                        listUsers.add(UserModel(doc.data as Map<String, Any?>))
+                    }
+                    continuation.resumeWith(Result.success(ResultModel.Success(listUsers)))
+                }
+                .addOnFailureListener {
+                    continuation.resumeWith(Result.success(ResultModel.Error(it.message)))
+                }
         }
     }
 }

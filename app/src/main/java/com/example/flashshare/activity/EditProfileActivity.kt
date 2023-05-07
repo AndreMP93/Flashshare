@@ -22,7 +22,6 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var user: UserModel
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let { selectedImageUri ->
-            println("TESTE? $selectedImageUri")
             viewModel.savePhotoProfile(user, selectedImageUri)
             binding.imageAvatarProfile.setImageURI(selectedImageUri)
         }
@@ -74,13 +73,13 @@ class EditProfileActivity : AppCompatActivity() {
                     binding.nameTextInput.setText(it.data.name)
                     binding.usernameTextInput.setText(it.data.username)
                     binding.bioUserTextInput.setText(it.data.bio)
-                    if (it.data.urlPhotoProfile != null){
+                    if (it.data.urlPhotoProfile != null && it.data.urlPhotoProfile != ""){
                         Glide.with(this).load(it.data.urlPhotoProfile).into(binding.imageAvatarProfile)
                     }
                 }
-                is ResultModel.Loading -> Toast.makeText(applicationContext, "Loading!!!", Toast.LENGTH_LONG).show()
+                is ResultModel.Loading -> {}
                 is ResultModel.Error -> {
-                    Toast.makeText(applicationContext, "Falha ao carregar os dados!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, getString(R.string.error_get_user_data), Toast.LENGTH_LONG).show()
                     finish()
                 }
             }
@@ -89,16 +88,12 @@ class EditProfileActivity : AppCompatActivity() {
         viewModel.updateProcess.observe(this){
             when(it){
                 is ResultModel.Success -> {
-                    Toast.makeText(applicationContext, "Sucesso!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, getString(R.string.success_save_user_data), Toast.LENGTH_LONG).show()
                     finish()
                 }
-                is ResultModel.Loading -> Toast.makeText(applicationContext, "Loading!!!", Toast.LENGTH_LONG).show()
-                is ResultModel.Error -> Toast.makeText(applicationContext, it.message, Toast.LENGTH_LONG).show()
+                is ResultModel.Loading -> {}
+                is ResultModel.Error -> Toast.makeText(applicationContext, getString(R.string.error_save_user_data), Toast.LENGTH_LONG).show()
             }
         }
-    }
-
-    companion object{
-        private val SELECT_GALLERY = 200
     }
 }

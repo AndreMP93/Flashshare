@@ -12,6 +12,7 @@ class AppConstants private constructor(){
         const val USER_COLLECTION = "users"
         const val ID_KEY = "id"
         const val NAME_KEY = "name"
+        const val NAME_UPPERCASE = "nameUppercase"
         const val EMAIL_KEY = "email"
         const val BIO_KEY = "bio"
         const val USERNAME_KEY = "username"

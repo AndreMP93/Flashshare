@@ -36,9 +36,18 @@ class RegisterActivity : AppCompatActivity() {
     private fun observes(){
         viewModel.registerProcess.observe(this){
             when(it){
-                is ResultModel.Success -> finish()
+                is ResultModel.Success -> {}
                 is ResultModel.Error -> it.message?.let { it1 -> showToast(it1) }
-                is ResultModel.Loading -> binding.textAppName.text = "Loading"
+                is ResultModel.Loading -> {}
+            }
+        }
+
+        viewModel.saveDateProcess.observe(this){
+            if (it is ResultModel.Success){
+                finish()
+            }
+            if(it is ResultModel.Error){
+                showToast(getString(R.string.error_register))
             }
         }
     }

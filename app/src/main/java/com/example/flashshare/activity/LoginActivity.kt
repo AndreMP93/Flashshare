@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.flashshare.MainActivity
+import com.example.flashshare.R
 import com.example.flashshare.databinding.ActivityLoginBinding
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.viewmodel.LoginViewModel
@@ -44,8 +45,8 @@ class LoginActivity : AppCompatActivity() {
         viewModel.loginProcess.observe(this){
             when(it){
                 is ResultModel.Success -> startActivity(Intent(applicationContext, MainActivity::class.java))
-                is ResultModel.Error -> Toast.makeText(applicationContext, it.message, Toast.LENGTH_LONG).show()
-                is ResultModel.Loading -> Toast.makeText(applicationContext, "Loading...", Toast.LENGTH_LONG).show()
+                is ResultModel.Error -> Toast.makeText(applicationContext, getString(R.string.error_login), Toast.LENGTH_LONG).show()
+                is ResultModel.Loading -> {}
             }
         }
 

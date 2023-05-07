@@ -58,7 +58,7 @@ class ProfileFragment : Fragment() {
                         binding!!.nameText.text = it.data.name
                         binding!!.usernameText.text = it.data.username
                         binding!!.bioText.text = it.data.bio
-                        if(it.data.urlPhotoProfile !=null){
+                        if (it.data.urlPhotoProfile != null && it.data.urlPhotoProfile != ""){
                             Glide.with(this).load(it.data.urlPhotoProfile).into(binding!!.imageAvatarProfile)
                         }
                     }
@@ -68,7 +68,7 @@ class ProfileFragment : Fragment() {
                 is ResultModel.Loading -> {
                     binding!!.progressBarProfile.visibility = View.VISIBLE
                 }
-                is ResultModel.Error -> Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                is ResultModel.Error -> Toast.makeText(context, getString(R.string.error_get_user_data), Toast.LENGTH_LONG).show()
             }
         }
     }

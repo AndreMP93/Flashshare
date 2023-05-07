@@ -34,7 +34,7 @@ class RegisterViewModel(application: Application): AndroidViewModel(application)
             if(result is ResultModel.Success){
                 securityPreferences.save(AppConstants.SHARED.USER_ID, result.data.id)
                 securityPreferences.save(AppConstants.SHARED.USER_EMAIL, result.data.email)
-                saveUserData(user)
+                saveUserData(result.data)
             }
         }
     }
