@@ -16,10 +16,13 @@
         android:theme="@style/Theme.Flashshare"
         tools:targetApi="31">
         <activity
+            android:name=".activity.FriendProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.EditProfileActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.RegisterActivity"
             android:exported="false"

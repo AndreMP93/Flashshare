@@ -7,17 +7,21 @@ class UserModel() {
     lateinit var name: String
     lateinit var email: String
     lateinit var id: String
-    lateinit var nameUppercase: String
     @Exclude @get: Exclude
     lateinit var password: String
+    var nameUppercase: String = ""
     var bio: String? = null
     var username: String? = null
     var urlPhotoProfile: String? = null
+    var posts: Int = 0
+    var followers: Int = 0
+    var following: Int = 0
 
 
     constructor(name: String, email: String): this(){
         this.name = name
         this.email = email
+        this.nameUppercase = this.name.uppercase()
     }
 
     constructor(
@@ -26,7 +30,7 @@ class UserModel() {
         email: String,
         bio: String?,
         username: String?,
-        urlPhoto: String?,
+        urlPhoto: String?
     ):this(){
         this.id = userId
         this.name = name
@@ -35,6 +39,7 @@ class UserModel() {
         this.bio = bio ?: ""
         this.username = username?.lowercase() ?: ""
         this.urlPhotoProfile = urlPhoto ?: ""
+
     }
 
     constructor(map: Map<String, Any?>): this(){

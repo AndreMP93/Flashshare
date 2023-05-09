@@ -1,5 +1,6 @@
 package com.example.flashshare.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import com.example.flashshare.activity.adapter.SearchAdapter
 import com.example.flashshare.databinding.FragmentSearchBinding
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.model.UserModel
+import com.example.flashshare.service.AppConstants
 import com.example.flashshare.service.SearchListener
 import com.example.flashshare.viewmodel.SearchViewModel
 
@@ -53,7 +55,15 @@ class SearchFragment : Fragment() {
         usersList = mutableListOf()
         adapter = SearchAdapter(requireContext() ,usersList, object : SearchListener{
             override fun onClick(userId: String) {
-                println(userId)
+                val bundle = Bundle().apply {
+                    putString(AppConstants.BUNDLE.USER_ID, userId)
+                }
+
+                val intent = Intent(context, FriendProfileActivity::class.java).apply {
+                    putExtras(bundle)
+                }
+
+                startActivity(intent)
             }
         })
 
@@ -61,16 +71,22 @@ class SearchFragment : Fragment() {
         binding!!.searchRecycleView.adapter = adapter
 
 
-        viewModel.searchProcess.observe(viewLifecycleOwner){
-            when(it){
-                is ResultModel.Success -> adapter.updateUsersList(it.data)
-                is ResultModel.Loading -> Toast.makeText(context, "Loading...", Toast.LENGTH_LONG).show()
-                is ResultModel.Error -> println("ERROR: ${it.message}")
-            }
-        }
+        observer()
+
 
         return binding!!.root
     }
 
+    private fun observer(){
+        viewModel.searchProcess.observe(viewLifecycleOwner){
+            when(it){
+                is ResultModel.Success -> {
+                    adapter.updateUsersList(it.data)
+                }
+                is ResultModel.Loading -> {}
+                is ResultModel.Error -> Toast.makeText(context, getString(R.string.error_message), Toast.LENGTH_LONG).show()
+            }
+        }
+    }
 
 }

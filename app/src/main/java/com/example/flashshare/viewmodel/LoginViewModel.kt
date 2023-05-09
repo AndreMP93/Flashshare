@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.model.UserModel
 import com.example.flashshare.service.AppConstants
-import com.example.flashshare.service.FirebaseListener
 import com.example.flashshare.service.repository.AuthRepository
 import com.example.flashshare.service.repository.local.SecurityPreferences
 import kotlinx.coroutines.launch

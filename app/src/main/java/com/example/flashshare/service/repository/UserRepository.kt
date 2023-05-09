@@ -42,7 +42,6 @@ class UserRepository{
                     .addOnSuccessListener { document ->
                         if (document.exists()) {
                             val user = document.toObject(UserModel::class.java)
-                            println("NAME> ${document.data}")
                             if(user!=null){
 
                                 continuation.resumeWith(Result.success(ResultModel.Success(user)))

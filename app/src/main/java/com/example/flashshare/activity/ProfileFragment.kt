@@ -32,7 +32,7 @@ class ProfileFragment : Fragment() {
         viewModel = ViewModelProvider(this)[EditProfileViewModel::class.java]
         observes()
 
-        binding!!.editProfileButton.setOnClickListener {
+        binding!!.actionProfileButton.setOnClickListener {
             startActivity(Intent(activity, EditProfileActivity::class.java))
         }
 

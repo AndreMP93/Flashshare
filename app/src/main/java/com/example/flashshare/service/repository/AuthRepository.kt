@@ -1,7 +1,6 @@
 package com.example.flashshare.service.repository
 
 import com.example.flashshare.model.UserModel
-import com.example.flashshare.service.FirebaseListener
 import com.example.flashshare.service.repository.remote.FirebaseAuthService
 
 class AuthRepository() {

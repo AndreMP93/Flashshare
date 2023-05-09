@@ -2,10 +2,8 @@ package com.example.flashshare.service.repository.remote
 
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.model.UserModel
-import com.example.flashshare.service.FirebaseListener
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class FirebaseAuthService {
@@ -34,7 +32,6 @@ class FirebaseAuthService {
             try {
                 authInstance.createUserWithEmailAndPassword(user.email, user.password)
                     .addOnSuccessListener {
-                        val user = UserModel("", "")
                         user.email = it.user?.email!!
                         user.id = it.user?.uid!!
                         continuation.resumeWith(Result.success(ResultModel.Success(user)))
