@@ -89,7 +89,7 @@ class FriendProfileActivity : AppCompatActivity() {
                     }
                 }
             }else{
-                print("TESTE: ERROR = ${it}")
+                showToast(it.toString())
             }
         }
 

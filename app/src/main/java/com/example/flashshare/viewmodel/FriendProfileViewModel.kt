@@ -64,11 +64,13 @@ class FriendProfileViewModel(application: Application): AndroidViewModel(applica
     fun followUser(friendId: String){
         viewModelScope.launch {
             val userId: String = sharedPreferences.get(AppConstants.SHARED.USER_ID)
-            val result = followRepository.followUser(userId, friendId)
-            if(result is ResultModel.Success){
-                checkFollowingUser(friendId)
-                getQuantityFollower(friendId)
-                getQuantityFollowing(friendId)
+            if(friendId != userId){
+                val result = followRepository.followUser(userId, friendId)
+                if(result is ResultModel.Success){
+                    checkFollowingUser(friendId)
+                    getQuantityFollower(friendId)
+                    getQuantityFollowing(friendId)
+                }
             }
         }
     }
@@ -76,11 +78,13 @@ class FriendProfileViewModel(application: Application): AndroidViewModel(applica
     fun unfollowUser(friendId: String){
         viewModelScope.launch {
             val userId: String = sharedPreferences.get(AppConstants.SHARED.USER_ID)
-            val result = followRepository.unfollowUser(userId, friendId)
-            if(result is ResultModel.Success){
-                checkFollowingUser(friendId)
-                getQuantityFollower(friendId)
-                getQuantityFollowing(friendId)
+            if(friendId != userId){
+                val result = followRepository.unfollowUser(userId, friendId)
+                if(result is ResultModel.Success){
+                    checkFollowingUser(friendId)
+                    getQuantityFollower(friendId)
+                    getQuantityFollowing(friendId)
+                }
             }
         }
     }

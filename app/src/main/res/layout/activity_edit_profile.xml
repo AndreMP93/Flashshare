@@ -49,10 +49,13 @@
                 android:layout_height="wrap_content"
                 android:focusable="auto"
                 android:focusableInTouchMode="true"
-                android:minHeight="50dp">
+                android:minHeight="50dp"
+                app:boxStrokeColor="@color/purple_700"
+                app:hintTextColor="@color/purple_700">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/name_TextInput"
+                    style="@style/InputText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_user"
@@ -60,16 +63,21 @@
                     android:drawableTint="@color/gray_700"
                     android:hint="@string/name"
                     android:minHeight="50dp"
-                    android:textColorHint="@color/gray_700" />
+                    android:textColorHint="@color/gray_700"
+                    android:textCursorDrawable="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="50dp">
+                android:minHeight="50dp"
+                app:boxStrokeColor="@color/purple_700"
+                app:hintTextColor="@color/purple_700"
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/username_TextInput"
+                    style="@style/InputText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_username"
@@ -83,10 +91,14 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="50dp">
+                android:minHeight="50dp"
+                app:boxStrokeColor="@color/purple_700"
+                app:hintTextColor="@color/purple_700"
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/bioUserTextInput"
+                    style="@style/InputText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_bio"
