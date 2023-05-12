@@ -87,7 +87,6 @@ class UserRepository{
                 storageRef.putFile(image)
                     .addOnSuccessListener {
                         it.storage.downloadUrl.addOnCompleteListener {uri ->
-                            println("TESTE: ${uri.result}")
                             user.urlPhotoProfile = uri.result.toString()
                             continuation.resumeWith(Result.success(ResultModel.Success(user)))
                         }

@@ -11,5 +11,5 @@
     <color name="pink_700">#C2185B</color>
     <color name="gray_100">#EBEBEB</color>
     <color name="gray_500">#A7A7A7</color>
-    <color name="gray_700">#787878</color>
+    <color name="gray_700" >#787878</color>
 </resources>

@@ -30,7 +30,9 @@
     <string name="bio">Bio</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="save_button">Savar</string>
-
+    <string name="filterTitle">Filtros</string>
+    <string name="post_image_button">Publicar</string>
+    <string name="description_post">Descrição</string>
     <string name="search_user">Buscar Usuários</string>
 
     <string name="error_get_user_data">Falha ao carregar os dados do Usuário</string>

@@ -10,6 +10,7 @@ class AppConstants private constructor(){
 
     object BUNDLE {
         const val USER_ID = "userId"
+        const val IMAGE_URI_ID = "imageUri"
     }
 
     object FIRESTORE {
@@ -24,14 +25,16 @@ class AppConstants private constructor(){
         const val BIO_KEY = "bio"
         const val USERNAME_KEY = "username"
         const val URL_PHOTO_KEY = "urlPhotoProfile"
-        const val POSTS_KEY = "posts"
-        const val FOLLOWERS_KEY = "followers"
-        const val FOLLOWING_KEY ="following"
+        const val USER_ID_KEY = "userId"
+        const val DESCRIPTION_KEY = "description"
+        const val DATE_PUBLICATION_KEY ="datePublication"
+        const val URL_PHOTO_POST_KEY = "urlPhotoPost"
     }
 
     object STORAGE {
         const val IMAGE_PATH = "images"
         const val PROFILE_PATH = "profile"
         const val POSTS_PATH = "posts"
+        const val USERS_PATH = "users"
     }
 }
