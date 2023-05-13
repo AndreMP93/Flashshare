@@ -16,7 +16,7 @@ import com.example.flashshare.databinding.FragmentSearchBinding
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.model.UserModel
 import com.example.flashshare.service.AppConstants
-import com.example.flashshare.service.SearchListener
+import com.example.flashshare.service.listener.SearchListener
 import com.example.flashshare.viewmodel.SearchViewModel
 
 class SearchFragment : Fragment() {
@@ -53,7 +53,7 @@ class SearchFragment : Fragment() {
 
 
         usersList = mutableListOf()
-        adapter = SearchAdapter(requireContext() ,usersList, object : SearchListener{
+        adapter = SearchAdapter(requireContext() ,usersList, object : SearchListener {
             override fun onClick(userId: String) {
                 val bundle = Bundle().apply {
                     putString(AppConstants.BUNDLE.USER_ID, userId)

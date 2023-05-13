@@ -40,7 +40,7 @@ class PublicationPostActivity : AppCompatActivity() {
         val imageUriString = bundle?.getString(AppConstants.BUNDLE.IMAGE_URI_ID)
         if (imageUriString!=null && imageUriString!=""){
             imageUri = Uri.parse(imageUriString)
-            binding.imagePost.setImageURI(imageUri)
+            binding.postImageView.setImageURI(imageUri)
         }else{
             Toast.makeText(applicationContext, getString(R.string.error_get_user_data), Toast.LENGTH_LONG).show()
             finish()

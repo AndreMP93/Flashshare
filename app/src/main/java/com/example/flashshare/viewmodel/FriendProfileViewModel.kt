@@ -5,10 +5,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.flashshare.model.PostModel
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.model.UserModel
 import com.example.flashshare.service.AppConstants
 import com.example.flashshare.service.repository.FollowRepository
+import com.example.flashshare.service.repository.PostRepository
 import com.example.flashshare.service.repository.UserRepository
 import com.example.flashshare.service.repository.local.SecurityPreferences
 import kotlinx.coroutines.launch
@@ -17,6 +19,7 @@ class FriendProfileViewModel(application: Application): AndroidViewModel(applica
 
     private val userRepository = UserRepository()
     private val followRepository = FollowRepository()
+    private val postRepository = PostRepository()
     private val sharedPreferences = SecurityPreferences(application.applicationContext)
 
 
@@ -28,6 +31,12 @@ class FriendProfileViewModel(application: Application): AndroidViewModel(applica
 
     private val _followingQuantity = MutableLiveData<ResultModel<Int>>()
     val followingQuantity: LiveData<ResultModel<Int>> = _followingQuantity
+
+    private val _postsQuantity = MutableLiveData<ResultModel<Int>>()
+    val postsQuantity: LiveData<ResultModel<Int>> = _postsQuantity
+
+    private val _loadPosts = MutableLiveData<ResultModel<List<PostModel>>>()
+    val loadPosts: LiveData<ResultModel<List<PostModel>>> = _loadPosts
 
     private val _isFollowingUser = MutableLiveData<ResultModel<Boolean>>()
     val isFollowingUser: LiveData<ResultModel<Boolean>> = _isFollowingUser
@@ -42,6 +51,12 @@ class FriendProfileViewModel(application: Application): AndroidViewModel(applica
         }
     }
 
+    fun getPosts(userId: String){
+        viewModelScope.launch {
+            _loadPosts.value = postRepository.getPosts(userId)
+        }
+    }
+
     fun getQuantityFollower(friendID: String){
         viewModelScope.launch {
             _followerQuantity.value = followRepository.getQuantityFollowers(friendID)
@@ -51,6 +66,12 @@ class FriendProfileViewModel(application: Application): AndroidViewModel(applica
     fun getQuantityFollowing(friendID: String){
         viewModelScope.launch {
             _followingQuantity.value = followRepository.getQuantityFollowing(friendID)
+        }
+    }
+
+    fun getPostsQuantity(friendID: String){
+        viewModelScope.launch {
+            _postsQuantity.value = postRepository.getPostsQuantity(friendID)
         }
     }
 

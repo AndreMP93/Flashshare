@@ -35,9 +35,7 @@ class FriendProfileActivity : AppCompatActivity() {
 
         observe()
 
-        viewModel.checkFollowingUser(friendId)
-        viewModel.getQuantityFollower(friendId)
-        viewModel.getQuantityFollowing(friendId)
+        getUserData(friendId)
 
         binding.fiendProfileLayout.actionProfileButton.setText(R.string.save_button)
 
@@ -108,9 +106,24 @@ class FriendProfileActivity : AppCompatActivity() {
                 showToast(it.message!!)
             }
         }
+
+        viewModel.postsQuantity.observe(this){
+            if(it is ResultModel.Success){
+                binding.fiendProfileLayout.textQuantityPublications.text = it.data.toString()
+            }else if(it is ResultModel.Error){
+                showToast(it.message!!)
+            }
+        }
     }
 
     private fun showToast(text: String){
         Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
+    }
+
+    private fun getUserData(userId: String){
+        viewModel.checkFollowingUser(userId)
+        viewModel.getQuantityFollower(userId)
+        viewModel.getQuantityFollowing(userId)
+        viewModel.getPostsQuantity(userId)
     }
 }

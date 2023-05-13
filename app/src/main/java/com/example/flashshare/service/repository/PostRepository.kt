@@ -27,6 +27,23 @@ class PostRepository {
                         for(doc in it.documents){
                             listPost.add(PostModel(doc.data as Map<String, Any>))
                         }
+                        continuation.resume(ResultModel.Success(listPost))
+                    }
+            }catch (e: Exception){
+                continuation.resume(ResultModel.Error(e.message))
+            }
+        }
+    }
+
+    suspend fun getPostsQuantity(userId: String): ResultModel<Int>{
+        return suspendCoroutine {continuation ->
+            try {
+                db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
+                    .document(userId)
+                    .collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
+                    .get()
+                    .addOnSuccessListener {
+                        continuation.resume(ResultModel.Success(it.documents.size))
                     }
             }catch (e: Exception){
                 continuation.resume(ResultModel.Error(e.message))

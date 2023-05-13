@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.flashshare.databinding.RowSearchListBinding
 import com.example.flashshare.model.UserModel
-import com.example.flashshare.service.SearchListener
+import com.example.flashshare.service.listener.SearchListener
 
 class SearchAdapter(var context: Context, private var usersList: List<UserModel>, private var listener: SearchListener)
     : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
