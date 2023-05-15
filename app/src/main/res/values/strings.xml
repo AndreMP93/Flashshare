@@ -28,6 +28,7 @@
     <string name="unfllow_button">Deixar de Seguir</string>
 
     <string name="bio">Bio</string>
+    <string name="comment">Comentario</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="save_button">Savar</string>
     <string name="filterTitle">Filtros</string>

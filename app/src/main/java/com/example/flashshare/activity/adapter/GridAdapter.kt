@@ -15,13 +15,13 @@ import com.bumptech.glide.request.target.Target
 import com.example.flashshare.R
 import com.example.flashshare.databinding.GridPostItemBinding
 import com.example.flashshare.model.PostModel
+import com.example.flashshare.service.listener.GridListener
 
 
-class GridAdapter(private val context: Context, private var listPosts: List<PostModel>):
+class GridAdapter(private val context: Context, private var listPosts: List<PostModel>, private val listener: GridListener):
         ArrayAdapter<PostModel>(context, R.layout.grid_post_item, listPosts){
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        println("TESTE: -> getView ${position}")
         val itemBinding: GridPostItemBinding
         if (convertView == null) {
             itemBinding = GridPostItemBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -32,6 +32,9 @@ class GridAdapter(private val context: Context, private var listPosts: List<Post
 
         val currentItem = listPosts[position] //getItem(position)
         itemBinding.postImageView.contentDescription = currentItem?.description
+        itemBinding.postImageView.setOnClickListener {
+            listener.onClick(currentItem.id)
+        }
         if (currentItem?.urlPhotoPost != ""){
             Glide.with(context)
                 .load(currentItem?.urlPhotoPost)

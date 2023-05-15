@@ -10,6 +10,7 @@ class AppConstants private constructor(){
 
     object BUNDLE {
         const val USER_ID = "userId"
+        const val POST_ID = "postId"
         const val IMAGE_URI_ID = "imageUri"
     }
 
@@ -18,6 +19,7 @@ class AppConstants private constructor(){
         const val FOLLOWERS_COLLECTION = "followers"
         const val FOLLOWING_COLLECTION = "following"
         const val POSTS_COLLECTION = "posts"
+        const val COMMENT_COLLECTION = "comments"
         const val ID_KEY = "id"
         const val NAME_KEY = "name"
         const val NAME_UPPERCASE = "nameUppercase"
@@ -29,6 +31,8 @@ class AppConstants private constructor(){
         const val DESCRIPTION_KEY = "description"
         const val DATE_PUBLICATION_KEY ="datePublication"
         const val URL_PHOTO_POST_KEY = "urlPhotoPost"
+        const val DATE_COMMENT_KEY ="dateComment"
+        const val LIKES_KEY ="likes"
     }
 
     object STORAGE {

@@ -14,6 +14,8 @@ import com.example.flashshare.activity.adapter.GridAdapter
 import com.example.flashshare.databinding.FragmentProfileBinding
 import com.example.flashshare.model.PostModel
 import com.example.flashshare.model.ResultModel
+import com.example.flashshare.service.AppConstants
+import com.example.flashshare.service.listener.GridListener
 import com.example.flashshare.viewmodel.EditProfileViewModel
 
 class ProfileFragment : Fragment() {
@@ -53,65 +55,78 @@ class ProfileFragment : Fragment() {
         binding = null
     }
 
-    private fun observes(){
-        viewModel.loadProcess.observe(viewLifecycleOwner){
-            when(it){
+    private fun observes() {
+        viewModel.loadProcess.observe(viewLifecycleOwner) {
+            when (it) {
                 is ResultModel.Success -> {
-                    if(binding!=null){
+                    if (binding != null) {
                         binding!!.progressBarProfile.visibility = View.GONE
                         binding!!.nameText.text = it.data.name
                         binding!!.usernameText.text = it.data.username
                         binding!!.bioText.text = it.data.bio
-                        if (it.data.urlPhotoProfile != null && it.data.urlPhotoProfile != ""){
-                            Glide.with(this).load(it.data.urlPhotoProfile).into(binding!!.imageAvatarProfile)
+                        if (it.data.urlPhotoProfile != null && it.data.urlPhotoProfile != "") {
+                            Glide.with(this).load(it.data.urlPhotoProfile)
+                                .into(binding!!.imageAvatarProfile)
                         }
                     }
 
 
                 }
+
                 is ResultModel.Loading -> {
                     binding!!.progressBarProfile.visibility = View.VISIBLE
                 }
+
                 is ResultModel.Error -> showToast(getString(R.string.error_get_user_data))
             }
         }
 
-        viewModel.loadPosts.observe(viewLifecycleOwner){
-            if(it is ResultModel.Success){
-                if(adapter != null){
+        viewModel.loadPosts.observe(viewLifecycleOwner) {
+            if (it is ResultModel.Success) {
+                if (adapter != null) {
                     adapter!!.updateItems(it.data)
-                }else{
-                    adapter = GridAdapter(requireContext(), it.data)
+                } else {
+                    adapter = GridAdapter(requireContext(), it.data, object : GridListener{
+                        override fun onClick(postId: String) {
+                            val intent = Intent(context, PostDetailsActivity::class.java)
+                            val bundle = Bundle().apply {
+                                putString(AppConstants.BUNDLE.USER_ID, viewModel.getUserId())
+                                putString(AppConstants.BUNDLE.POST_ID, postId)
+                            }
+                            intent.putExtras(bundle)
+                            startActivity(intent)
+                        }
+                    })
                     binding!!.profileGridView.adapter = adapter
                 }
 
             }
         }
 
-        viewModel.postsQuantity.observe(viewLifecycleOwner){
-            if(it is ResultModel.Success){
+        viewModel.postsQuantity.observe(viewLifecycleOwner) {
+            if (it is ResultModel.Success) {
                 binding!!.textQuantityPublications.text = it.data.toString()
-            }else{
+            } else {
                 showToast(getString(R.string.error_get_user_data))
             }
         }
-        viewModel.followerQuantity.observe(viewLifecycleOwner){
-            if(it is ResultModel.Success){
+        viewModel.followerQuantity.observe(viewLifecycleOwner) {
+            if (it is ResultModel.Success) {
                 binding!!.textQuantityFollowers.text = it.data.toString()
-            }else{
+            } else {
                 showToast(getString(R.string.error_get_user_data))
             }
         }
-        viewModel.followingQuantity.observe(viewLifecycleOwner){
-            if(it is ResultModel.Success){
+        viewModel.followingQuantity.observe(viewLifecycleOwner) {
+            if (it is ResultModel.Success) {
                 binding!!.textQuantityFollowing.text = it.data.toString()
-            }else{
+            } else {
                 showToast(getString(R.string.error_get_user_data))
             }
         }
     }
 
-    private fun getUserData(){
+    private fun getUserData() {
         viewModel.getUserData()
         viewModel.getPosts()
         viewModel.getPostsQuantity()
@@ -119,7 +134,7 @@ class ProfileFragment : Fragment() {
         viewModel.getFollowingQuantity()
     }
 
-    private fun showToast(text: String){
+    private fun showToast(text: String) {
         Toast.makeText(context, text, Toast.LENGTH_LONG).show()
     }
 }
