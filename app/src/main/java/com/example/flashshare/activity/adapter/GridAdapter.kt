@@ -31,6 +31,8 @@ class GridAdapter(private val context: Context, private var listPosts: List<Post
         }
 
         val currentItem = listPosts[position] //getItem(position)
+//        itemBinding.postImageView.layoutParams.height = itemBinding.postImageView.width
+//        itemBinding.postImageView.requestLayout()
         itemBinding.postImageView.contentDescription = currentItem?.description
         itemBinding.postImageView.setOnClickListener {
             listener.onClick(currentItem.id)

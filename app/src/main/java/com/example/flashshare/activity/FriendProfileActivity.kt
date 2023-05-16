@@ -1,14 +1,17 @@
 package com.example.flashshare.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.flashshare.R
+import com.example.flashshare.activity.adapter.GridAdapter
 import com.example.flashshare.databinding.ActivityFriendProfileBinding
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.service.AppConstants
+import com.example.flashshare.service.listener.GridListener
 import com.example.flashshare.viewmodel.FriendProfileViewModel
 
 class FriendProfileActivity : AppCompatActivity() {
@@ -16,6 +19,7 @@ class FriendProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFriendProfileBinding
     private lateinit var viewModel: FriendProfileViewModel
     private var friendId: String = ""
+    private var adapter: GridAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +30,7 @@ class FriendProfileActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         friendId = bundle?.getString(AppConstants.BUNDLE.USER_ID).toString()
-        if (friendId!=null && friendId!=""){
+        if (friendId!=""){
             viewModel.getUserData(friendId)
         }else{
             Toast.makeText(applicationContext, getString(R.string.error_get_user_data), Toast.LENGTH_LONG).show()
@@ -114,6 +118,31 @@ class FriendProfileActivity : AppCompatActivity() {
                 showToast(it.message!!)
             }
         }
+
+        viewModel.loadPosts.observe(this){
+            when(it){
+                is ResultModel.Success -> {
+                    if (adapter != null) {
+                        adapter!!.updateItems(it.data)
+                    } else {
+                        adapter = GridAdapter(applicationContext, it.data, object : GridListener {
+                            override fun onClick(postId: String) {
+                                val intent = Intent(applicationContext, PostDetailsActivity::class.java)
+                                val bundle = Bundle().apply {
+                                    putString(AppConstants.BUNDLE.POST_ID, postId)
+                                    putString(AppConstants.BUNDLE.USER_ID, friendId)
+                                }
+                                intent.putExtras(bundle)
+                                startActivity(intent)
+                            }
+                        })
+                        binding.fiendProfileLayout.profileGridView.adapter = adapter
+                    }
+                }
+                is ResultModel.Error -> {}
+                is ResultModel.Loading -> {}
+            }
+        }
     }
 
     private fun showToast(text: String){
@@ -125,5 +154,6 @@ class FriendProfileActivity : AppCompatActivity() {
         viewModel.getQuantityFollower(userId)
         viewModel.getQuantityFollowing(userId)
         viewModel.getPostsQuantity(userId)
+        viewModel.getPosts(userId)
     }
 }

@@ -9,15 +9,17 @@ class PostModel() {
     lateinit var urlPhotoPost: String
     lateinit var description: String
     lateinit var datePublication: String
-    var likes: Int = 0
+    var likes: Long = 0
+    var isLiked: Boolean = false
 
-    constructor(postId: String, uId: String, urlPhoto: String, description: String, date: String, likes: Int):this(){
+    constructor(postId: String, uId: String, urlPhoto: String, description: String, date: String, likes: Long, isLiked: Boolean):this(){
         this.id = postId
         this.userId = uId
         this.urlPhotoPost = urlPhoto
         this.description = description
         this.datePublication = date
-        this.likes = 0
+        this.likes = likes
+        this.isLiked = isLiked
     }
 
     constructor(map: Map<String, Any>):this(){
@@ -26,7 +28,8 @@ class PostModel() {
         this.urlPhotoPost = map[AppConstants.FIRESTORE.URL_PHOTO_POST_KEY] as String
         this.description = map[AppConstants.FIRESTORE.DESCRIPTION_KEY].toString()
         this.datePublication = map[AppConstants.FIRESTORE.DATE_PUBLICATION_KEY] as String
-        this.likes = map[AppConstants.FIRESTORE.LIKES_KEY] as Int
+        this.likes = map[AppConstants.FIRESTORE.LIKES_KEY] as Long
+        this.isLiked = map[AppConstants.FIRESTORE.IS_LIKED_KEY] as Boolean
 
     }
 
@@ -38,6 +41,7 @@ class PostModel() {
         map[AppConstants.FIRESTORE.DESCRIPTION_KEY] = this.description
         map[AppConstants.FIRESTORE.DATE_PUBLICATION_KEY] = this.datePublication
         map[AppConstants.FIRESTORE.LIKES_KEY] = this.likes
+        map[AppConstants.FIRESTORE.IS_LIKED_KEY] = this.isLiked
         return map
     }
 }

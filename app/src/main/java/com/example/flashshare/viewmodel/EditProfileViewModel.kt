@@ -103,8 +103,4 @@ class EditProfileViewModel(application: Application): AndroidViewModel(applicati
             }
         }
     }
-
-    fun getUserId(): String {
-        return userId
-    }
 }

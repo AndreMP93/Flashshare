@@ -90,7 +90,6 @@ class ProfileFragment : Fragment() {
                         override fun onClick(postId: String) {
                             val intent = Intent(context, PostDetailsActivity::class.java)
                             val bundle = Bundle().apply {
-                                putString(AppConstants.BUNDLE.USER_ID, viewModel.getUserId())
                                 putString(AppConstants.BUNDLE.POST_ID, postId)
                             }
                             intent.putExtras(bundle)

@@ -33,6 +33,7 @@ class AppConstants private constructor(){
         const val URL_PHOTO_POST_KEY = "urlPhotoPost"
         const val DATE_COMMENT_KEY ="dateComment"
         const val LIKES_KEY ="likes"
+        const val IS_LIKED_KEY ="isLiked"
     }
 
     object STORAGE {
