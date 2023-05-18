@@ -13,7 +13,6 @@ class CommentModel() {
     constructor(
         id: String,
         description: String,
-        likes: Int,
         userId: String,
         userName: String,
         urlUserPhoto: String,

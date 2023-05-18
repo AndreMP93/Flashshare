@@ -2,7 +2,9 @@ package com.example.flashshare.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -15,6 +17,7 @@ import com.example.flashshare.model.ResultModel
 import com.example.flashshare.service.AppConstants
 import com.example.flashshare.service.listener.CommentListener
 import com.example.flashshare.viewmodel.PostDetailsViewModel
+import java.util.Calendar
 
 class PostDetailsActivity : AppCompatActivity() {
 
@@ -33,31 +36,13 @@ class PostDetailsActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[PostDetailsViewModel::class.java]
 
-        val bundle = intent.extras
-        postId = bundle?.getString(AppConstants.BUNDLE.POST_ID).toString()
-        friendId = bundle?.getString(AppConstants.BUNDLE.USER_ID).toString()
+        setRecyclerView()
 
-        if (postId != ""){
-            if(friendId != ""){
-                viewModel.getPost(friendId, postId)
-                viewModel.getComments(friendId, postId)
-            }else{
-                viewModel.getPost(postId)
-                viewModel.getComments(postId)
-            }
-        }else{
-            showToast(getString(R.string.error_message))
-            finish()
-        }
+        getIntentData()
 
         setObserve()
 
-        setRecyclerView()
-
-        binding.likeImage.setOnClickListener {
-            postDetails.isLiked = !postDetails.isLiked
-            viewModel.updatePost(postId,postDetails)
-        }
+        setButtons()
 
     }
 
@@ -69,9 +54,30 @@ class PostDetailsActivity : AppCompatActivity() {
                     binding.descriptionPostText.text = it.data.description
                     Glide.with(this).load(it.data.urlPhotoPost)
                         .into(binding.imagePost)
-                    if(it.data.isLiked){
+                }
+                is ResultModel.Error -> {}
+                is ResultModel.Loading -> {}
+            }
+        }
+
+        viewModel.isLiked.observe(this){
+            when(it){
+                is ResultModel.Success -> {
+                    if(it.data){
                         binding.likeImage.setImageResource(R.drawable.ic_like)
+                    }else{
+                        binding.likeImage.setImageResource(R.drawable.ic_not_like)
                     }
+                }
+                is ResultModel.Error -> {}
+                is ResultModel.Loading -> {}
+            }
+        }
+
+        viewModel.changeLikeProcess.observe(this){
+            when(it){
+                is ResultModel.Success -> {
+                    viewModel.checkLikedPost(friendId, postId)
                 }
                 is ResultModel.Error -> {}
                 is ResultModel.Loading -> {}
@@ -101,7 +107,7 @@ class PostDetailsActivity : AppCompatActivity() {
         viewModel.loadCommentsProcess.observe(this){
             when(it){
                 is ResultModel.Success -> {
-                    adapter.updateUsersList(it.data)
+                    adapter.updateCommentsList(it.data)
                 }
                 is ResultModel.Error -> {}
                 is ResultModel.Loading -> {}
@@ -126,5 +132,61 @@ class PostDetailsActivity : AppCompatActivity() {
 
         binding.commentRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
         binding.commentRecyclerView.adapter = adapter
+    }
+
+    private fun setButtons(){
+        binding.likeImage.setOnClickListener {
+            if(friendId != ""){
+                viewModel.changeLike(friendId, postId)
+            }
+        }
+
+        binding.commentImage.setOnClickListener {
+            if(friendId != ""){
+                showCommentAlertDialog()
+            }
+        }
+    }
+
+    private fun getIntentData(){
+        val bundle = intent.extras
+        postId = bundle?.getString(AppConstants.BUNDLE.POST_ID).toString()
+        friendId = bundle?.getString(AppConstants.BUNDLE.USER_ID).toString()
+
+        if (postId != ""){
+            if(friendId != ""){
+                viewModel.getPost(friendId, postId)
+                viewModel.getComments(friendId, postId)
+                viewModel.checkLikedPost(friendId, postId)
+            }else{
+                viewModel.getPost(postId)
+                viewModel.getComments(postId)
+            }
+        }else{
+            showToast(getString(R.string.error_message))
+            finish()
+        }
+    }
+
+    private fun showCommentAlertDialog(){
+        val inputEditText = EditText(this)
+
+
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle(getString(R.string.comment))
+        alertDialogBuilder.setMessage(getString(R.string.input_comment))
+        alertDialogBuilder.setView(inputEditText)
+        alertDialogBuilder.setPositiveButton(getString(R.string.positive_button)) { dialog, which ->
+            val comment = CommentModel()
+            comment.description = inputEditText.text.toString()
+            comment.date = Calendar.getInstance().timeInMillis.toString()
+            viewModel.createComments(friendId, postId, comment)
+        }
+        alertDialogBuilder.setNegativeButton(getString(R.string.negative_button)) { dialog, which ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 }

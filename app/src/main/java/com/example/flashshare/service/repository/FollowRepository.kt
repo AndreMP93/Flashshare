@@ -62,10 +62,8 @@ class FollowRepository {
                     .get()
                     .addOnCompleteListener {
                         if(it.isSuccessful){
-                            println("TEST: -> ${it.result.exists()}")
                             continuation.resume(ResultModel.Success(it.result.exists()))
                         }else{
-                            println("TEST: -> ERROR")
                             continuation.resume(ResultModel.Error("Falha Inesperada!!"))
                         }
                     }

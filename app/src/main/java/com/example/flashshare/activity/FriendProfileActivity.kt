@@ -67,7 +67,6 @@ class FriendProfileActivity : AppCompatActivity() {
                 is ResultModel.Success -> {
                     binding.toolbarFiendProfile.mainToolbar.title = it.data.name
                     binding.fiendProfileLayout.nameText.text = it.data.name
-                    binding.fiendProfileLayout.usernameText.text = it.data.username
                     binding.fiendProfileLayout.bioText.text = it.data.bio
                     if (it.data.urlPhotoProfile != null && it.data.urlPhotoProfile != ""){
                         Glide.with(this).load(it.data.urlPhotoProfile).into(binding.fiendProfileLayout.imageAvatarProfile)

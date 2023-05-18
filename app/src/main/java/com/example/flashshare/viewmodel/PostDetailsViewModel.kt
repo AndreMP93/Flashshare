@@ -6,17 +6,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.flashshare.model.CommentModel
+import com.example.flashshare.model.LikedPostModel
 import com.example.flashshare.model.PostModel
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.service.AppConstants
 import com.example.flashshare.service.repository.CommentRepository
+import com.example.flashshare.service.repository.LikedPostsRepository
 import com.example.flashshare.service.repository.PostRepository
+import com.example.flashshare.service.repository.UserRepository
 import com.example.flashshare.service.repository.local.SecurityPreferences
 import kotlinx.coroutines.launch
 
 class PostDetailsViewModel(application: Application): AndroidViewModel(application) {
     private val sharedPreferences = SecurityPreferences(application.applicationContext)
     private val postRepository = PostRepository()
+    private val userRepository = UserRepository()
+    private val likedPostsRepository = LikedPostsRepository()
     private val commentRepository = CommentRepository()
 
     private val _loadPostProcess = MutableLiveData<ResultModel<PostModel>>()
@@ -28,10 +33,17 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
     private val _loadCommentsProcess = MutableLiveData<ResultModel<List<CommentModel>>>()
     val loadCommentsProcess: LiveData<ResultModel<List<CommentModel>>> = _loadCommentsProcess
 
+    private val _isLiked = MutableLiveData<ResultModel<Boolean>>()
+    val isLiked: LiveData<ResultModel<Boolean>> = _isLiked
+
     private val _createCommentProcess = MutableLiveData<ResultModel<Unit>>()
     val createCommentProcess: LiveData<ResultModel<Unit>> = _createCommentProcess
 
+    private val _changeLikeProcess = MutableLiveData<ResultModel<Unit>>()
+    val changeLikeProcess: LiveData<ResultModel<Unit>> = _changeLikeProcess
+
     private var uId: String = sharedPreferences.get(AppConstants.SHARED.USER_ID)
+    private var isLikedPost = false
 
     fun getPost(postId: String){
         viewModelScope.launch {
@@ -65,20 +77,46 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
 
     fun getComments(userId: String, postId: String){
         viewModelScope.launch {
+            println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
             _loadCommentsProcess.value = commentRepository.getComments(userId, postId)
         }
     }
 
-    fun createComments(postId: String, comment: CommentModel){
-        viewModelScope.launch {
-            _createCommentProcess.value = commentRepository.addComment(uId, postId, comment)
-        }
-    }
 
     fun createComments(userId: String, postId: String, comment: CommentModel){
         viewModelScope.launch {
-            _createCommentProcess.value = commentRepository.addComment(userId, postId, comment)
+            val result = userRepository.getUser(uId)
+            if(result is ResultModel.Success){
+                comment.userId = uId
+                comment.userName = result.data.name
+                comment.urlUserPhoto = result.data.urlPhotoProfile ?: ""
+                _createCommentProcess.value = commentRepository.addComment(userId, postId, comment)
+            }else{
+                val error = result as ResultModel.Error
+                _createCommentProcess.value = ResultModel.Error(error.message)
+            }
+
         }
     }
 
+    fun changeLike(userId: String, postId: String){
+        viewModelScope.launch {
+            if(isLikedPost){
+                isLikedPost = false
+                _changeLikeProcess.value = likedPostsRepository.removeLike(userId, postId, LikedPostModel(uId))
+            }else{
+                isLikedPost = true
+                _changeLikeProcess.value = likedPostsRepository.addLike(userId, postId, LikedPostModel(uId))
+            }
+            checkLikedPost(userId, postId)
+        }
+    }
+
+    fun checkLikedPost(userId: String, postId: String){
+        viewModelScope.launch {
+            val result = likedPostsRepository.checkLikedPost(userId, postId, LikedPostModel(uId))
+            isLikedPost = if(result is ResultModel.Success) result.data else false
+            _isLiked.value = result
+        }
+    }
 }

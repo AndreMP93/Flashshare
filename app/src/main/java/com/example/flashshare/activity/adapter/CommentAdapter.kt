@@ -54,7 +54,8 @@ class CommentAdapter(var context: Context, private var commentList: List<Comment
         holder.bind(commentList[position], context)
     }
 
-    fun updateUsersList(list: List<CommentModel>) {
+    fun updateCommentsList(list: List<CommentModel>) {
+        println("TESTE: updateCommentsList")
         commentList = list
         notifyDataSetChanged()
     }

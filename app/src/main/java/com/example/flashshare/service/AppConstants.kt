@@ -19,6 +19,7 @@ class AppConstants private constructor(){
         const val FOLLOWERS_COLLECTION = "followers"
         const val FOLLOWING_COLLECTION = "following"
         const val POSTS_COLLECTION = "posts"
+        const val LIKED_POSTS_COLLECTION = "posts"
         const val COMMENT_COLLECTION = "comments"
         const val ID_KEY = "id"
         const val NAME_KEY = "name"
@@ -34,6 +35,7 @@ class AppConstants private constructor(){
         const val DATE_COMMENT_KEY ="dateComment"
         const val LIKES_KEY ="likes"
         const val IS_LIKED_KEY ="isLiked"
+        const val POST_ID_KEY = "postId"
     }
 
     object STORAGE {

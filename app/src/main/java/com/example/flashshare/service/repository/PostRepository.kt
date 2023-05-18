@@ -47,7 +47,6 @@ class PostRepository {
                     .document(postId)
                     .get()
                     .addOnSuccessListener {
-                        println("RESTE: ${it.data}")
                         val post = PostModel(it.data as Map<String, Any>)
                         continuation.resume(ResultModel.Success(post))
                     }

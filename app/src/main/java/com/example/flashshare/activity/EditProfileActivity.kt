@@ -42,7 +42,6 @@ class EditProfileActivity : AppCompatActivity() {
 
         binding.updateButton.setOnClickListener {
             user.name = binding.nameTextInput.text.toString()
-            user.username = binding.usernameTextInput.text.toString()
             user.bio = binding.bioUserTextInput.text.toString()
             viewModel.update(user)
         }
@@ -71,7 +70,6 @@ class EditProfileActivity : AppCompatActivity() {
                 is ResultModel.Success -> {
                     user = it.data
                     binding.nameTextInput.setText(it.data.name)
-                    binding.usernameTextInput.setText(it.data.username)
                     binding.bioUserTextInput.setText(it.data.bio)
                     if (it.data.urlPhotoProfile != null && it.data.urlPhotoProfile != ""){
                         Glide.with(this).load(it.data.urlPhotoProfile).into(binding.imageAvatarProfile)

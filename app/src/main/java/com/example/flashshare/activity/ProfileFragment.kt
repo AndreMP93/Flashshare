@@ -62,7 +62,6 @@ class ProfileFragment : Fragment() {
                     if (binding != null) {
                         binding!!.progressBarProfile.visibility = View.GONE
                         binding!!.nameText.text = it.data.name
-                        binding!!.usernameText.text = it.data.username
                         binding!!.bioText.text = it.data.bio
                         if (it.data.urlPhotoProfile != null && it.data.urlPhotoProfile != "") {
                             Glide.with(this).load(it.data.urlPhotoProfile)

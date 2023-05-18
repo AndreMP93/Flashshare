@@ -11,7 +11,6 @@ class UserModel() {
     lateinit var password: String
     var nameUppercase: String = ""
     var bio: String? = null
-    var username: String? = null
     var urlPhotoProfile: String? = null
     var posts: Int = 0
     var followers: Int = 0
@@ -29,7 +28,6 @@ class UserModel() {
         name: String,
         email: String,
         bio: String?,
-        username: String?,
         urlPhoto: String?
     ):this(){
         this.id = userId
@@ -37,7 +35,6 @@ class UserModel() {
         this.nameUppercase = this.name.uppercase()
         this.email = email
         this.bio = bio ?: ""
-        this.username = username?.lowercase() ?: ""
         this.urlPhotoProfile = urlPhoto ?: ""
 
     }
@@ -48,7 +45,6 @@ class UserModel() {
         this.nameUppercase = this.name.uppercase()
         this.email = map[AppConstants.FIRESTORE.EMAIL_KEY] as String
         this.bio = map[AppConstants.FIRESTORE.BIO_KEY].toString()
-        this.username = map[AppConstants.FIRESTORE.USERNAME_KEY].toString().lowercase()
         this.urlPhotoProfile = map[AppConstants.FIRESTORE.URL_PHOTO_KEY] as String?
     }
 
@@ -58,7 +54,6 @@ class UserModel() {
         map[AppConstants.FIRESTORE.NAME_KEY] = this.name
         map[AppConstants.FIRESTORE.NAME_UPPERCASE] = this.nameUppercase
         map[AppConstants.FIRESTORE.EMAIL_KEY] = this.email
-        map[AppConstants.FIRESTORE.USERNAME_KEY] = this.username?.lowercase() ?: ""
         map[AppConstants.FIRESTORE.BIO_KEY] = this.bio ?: ""
         map[AppConstants.FIRESTORE.URL_PHOTO_KEY] = this.urlPhotoProfile ?: ""
 

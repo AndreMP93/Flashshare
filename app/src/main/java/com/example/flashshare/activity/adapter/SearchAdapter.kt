@@ -17,7 +17,6 @@ class SearchAdapter(var context: Context, private var usersList: List<UserModel>
 
             fun bind(user: UserModel, context: Context){
                 itemBinding.nameLabel.text = user.name
-                itemBinding.usernameLabel.text = user.username
                 if (user.urlPhotoProfile != null && user.urlPhotoProfile != ""){
                     Glide.with(context).load(user.urlPhotoProfile).into(itemBinding.userImage)
                 }
