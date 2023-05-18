@@ -25,7 +25,7 @@ class PostDetailsActivity : AppCompatActivity() {
     private lateinit var viewModel: PostDetailsViewModel
     private lateinit var postDetails: PostModel
     private var postId:String = ""
-    private var friendId: String = ""
+    private var friendId: String? = ""
     private var commentList = mutableListOf<CommentModel>()
     private lateinit var adapter: CommentAdapter
 
@@ -38,9 +38,9 @@ class PostDetailsActivity : AppCompatActivity() {
 
         setRecyclerView()
 
-        getIntentData()
-
         setObserve()
+
+        getIntentData()
 
         setButtons()
 
@@ -77,7 +77,7 @@ class PostDetailsActivity : AppCompatActivity() {
         viewModel.changeLikeProcess.observe(this){
             when(it){
                 is ResultModel.Success -> {
-                    viewModel.checkLikedPost(friendId, postId)
+                    viewModel.checkLikedPost(friendId!!, postId)
                 }
                 is ResultModel.Error -> {}
                 is ResultModel.Loading -> {}
@@ -136,13 +136,13 @@ class PostDetailsActivity : AppCompatActivity() {
 
     private fun setButtons(){
         binding.likeImage.setOnClickListener {
-            if(friendId != ""){
-                viewModel.changeLike(friendId, postId)
+            if(friendId != "" && friendId != null){
+                viewModel.changeLike(friendId!!, postId)
             }
         }
 
         binding.commentImage.setOnClickListener {
-            if(friendId != ""){
+            if(friendId != "" && friendId != null){
                 showCommentAlertDialog()
             }
         }
@@ -150,14 +150,15 @@ class PostDetailsActivity : AppCompatActivity() {
 
     private fun getIntentData(){
         val bundle = intent.extras
-        postId = bundle?.getString(AppConstants.BUNDLE.POST_ID).toString()
-        friendId = bundle?.getString(AppConstants.BUNDLE.USER_ID).toString()
 
-        if (postId != ""){
-            if(friendId != ""){
-                viewModel.getPost(friendId, postId)
-                viewModel.getComments(friendId, postId)
-                viewModel.checkLikedPost(friendId, postId)
+        if (bundle != null){
+            postId = bundle.getString(AppConstants.BUNDLE.POST_ID).toString()
+            friendId = bundle.getString(AppConstants.BUNDLE.USER_ID)
+            if(friendId != null && friendId != ""){
+
+                viewModel.getPost(friendId!!, postId)
+                viewModel.getComments(friendId!!, postId)
+                viewModel.checkLikedPost(friendId!!, postId)
             }else{
                 viewModel.getPost(postId)
                 viewModel.getComments(postId)
@@ -180,7 +181,7 @@ class PostDetailsActivity : AppCompatActivity() {
             val comment = CommentModel()
             comment.description = inputEditText.text.toString()
             comment.date = Calendar.getInstance().timeInMillis.toString()
-            viewModel.createComments(friendId, postId, comment)
+            viewModel.createComments(friendId!!, postId, comment)
         }
         alertDialogBuilder.setNegativeButton(getString(R.string.negative_button)) { dialog, which ->
             dialog.dismiss()

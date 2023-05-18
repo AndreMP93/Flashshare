@@ -6,33 +6,16 @@
     android:layout_height="wrap_content"
     android:background="@drawable/background_item_grid"
     android:gravity="center"
-    android:padding="3dp">
+    android:maxHeight="100dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/postImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="120dp"
-            android:contentDescription="@string/app_name"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
-
-        <ProgressBar
-            android:id="@+id/progressGridItem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/postImageView"
-            app:layout_constraintEnd_toEndOf="@+id/postImageView"
-            app:layout_constraintStart_toStartOf="@+id/postImageView"
-            app:layout_constraintTop_toTopOf="@+id/postImageView" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/postImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/app_name"
+        android:minWidth="70dp"
+        android:minHeight="70dp"
+        android:scaleType="fitXY"
+        tools:srcCompat="@drawable/ic_logo" />
 
 </LinearLayout>

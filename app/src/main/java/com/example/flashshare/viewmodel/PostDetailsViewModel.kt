@@ -43,7 +43,8 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
     val changeLikeProcess: LiveData<ResultModel<Unit>> = _changeLikeProcess
 
     private var uId: String = sharedPreferences.get(AppConstants.SHARED.USER_ID)
-    private var isLikedPost = false
+    private var isLikedPost: Boolean = false
+
 
     fun getPost(postId: String){
         viewModelScope.launch {
@@ -77,7 +78,6 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
 
     fun getComments(userId: String, postId: String){
         viewModelScope.launch {
-            println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
             _loadCommentsProcess.value = commentRepository.getComments(userId, postId)
         }
     }

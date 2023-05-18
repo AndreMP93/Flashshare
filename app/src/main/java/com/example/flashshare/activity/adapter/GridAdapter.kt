@@ -1,17 +1,22 @@
 package com.example.flashshare.activity.adapter
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import com.example.flashshare.R
 import com.example.flashshare.databinding.GridPostItemBinding
 import com.example.flashshare.model.PostModel
@@ -33,36 +38,63 @@ class GridAdapter(private val context: Context, private var listPosts: List<Post
         val currentItem = listPosts[position] //getItem(position)
 //        itemBinding.postImageView.layoutParams.height = itemBinding.postImageView.width
 //        itemBinding.postImageView.requestLayout()
+        itemBinding.postImageView.minimumHeight = 300
+        itemBinding.postImageView.minimumWidth = 300
         itemBinding.postImageView.contentDescription = currentItem?.description
         itemBinding.postImageView.setOnClickListener {
             listener.onClick(currentItem.id)
         }
-        if (currentItem?.urlPhotoPost != ""){
-            Glide.with(context)
-                .load(currentItem?.urlPhotoPost)
-                .listener(object: RequestListener<Drawable>{
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        Toast.makeText(context,e?.message ,Toast.LENGTH_LONG).show()
-                        return false
-                    }
 
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        itemBinding.progressGridItem.visibility = View.GONE
-                        return false
-                    }
-                })
-                .into(itemBinding.postImageView)
+        if (currentItem.urlPhotoPost != ""){
+
+            itemBinding.postImageView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+                override fun onGlobalLayout() {
+                    itemBinding.postImageView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                    val targetWidth = itemBinding.postImageView.width
+                    val targetHeight = itemBinding.postImageView.height
+
+                    Glide.with(context)
+                        .load(currentItem.urlPhotoPost)
+                        .into(object : CustomTarget<Drawable>(){
+                            override fun onResourceReady(
+                                resource: Drawable,
+                                transition: Transition<in Drawable>?
+                            ) {
+                                val originalWidth = resource.intrinsicWidth
+                                val originalHeight = resource.intrinsicHeight
+
+                                if (originalWidth > originalHeight) {
+                                    val scaleFactor = targetHeight.toFloat() / originalHeight
+                                    val scaledWidth = (originalWidth * scaleFactor).toInt()
+                                    resource.setBounds(0, 0, scaledWidth, targetHeight)
+
+                                    itemBinding.postImageView.scaleType = ImageView.ScaleType.CENTER_CROP
+                                    itemBinding.postImageView.setImageDrawable(resource)
+                                }else {
+                                    val scaleFactor = targetWidth.toFloat() / originalWidth
+                                    val scaledHeight = (originalHeight * scaleFactor).toInt()
+                                    resource.setBounds(0, 0, targetWidth, scaledHeight)
+
+                                    itemBinding.postImageView.scaleType = ImageView.ScaleType.CENTER_CROP
+                                    itemBinding.postImageView.setImageDrawable(resource)
+                                }
+
+                                // Após definir a escala do ImageView como FIT_XY
+                                val layoutParams = itemBinding.root.layoutParams
+                                layoutParams.height = itemBinding.postImageView.width
+                                itemBinding.root.layoutParams = layoutParams
+
+                            }
+
+                            override fun onLoadCleared(placeholder: Drawable?) {
+
+                            }
+
+                        })
+                }
+            })
+
         }
         return itemBinding.root
     }
