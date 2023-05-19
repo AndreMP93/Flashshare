@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="8dp"
     tools:context=".activity.PublicationPostActivity">
 
     <include
@@ -17,7 +20,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,14 +29,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/postImageView"
                 android:layout_width="match_parent"
-                android:layout_height="460dp"
-                android:scaleType="fitCenter"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@color/gray_200"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -41,9 +44,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="16dp"
                 android:minHeight="56dp"
                 app:boxStrokeColor="@color/purple_700"
                 app:hintTextColor="@color/purple_700">
@@ -54,13 +57,6 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/description_post" />
             </com.google.android.material.textfield.TextInputLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView2"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp" />
 
         </LinearLayout>
     </ScrollView>

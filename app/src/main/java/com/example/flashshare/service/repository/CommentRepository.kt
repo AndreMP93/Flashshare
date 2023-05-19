@@ -5,6 +5,7 @@ import com.example.flashshare.model.PostModel
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.service.AppConstants
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlin.coroutines.resume
@@ -57,7 +58,7 @@ class CommentRepository {
         }
     }
 
-    suspend fun getComments(userId: String, postId: String): ResultModel<List<CommentModel>>{
+    suspend fun getComments(userId: String, postId: String, currentUserId: String): ResultModel<List<CommentModel>>{
         return suspendCoroutine { continuation ->
             try {
                 db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
@@ -65,12 +66,13 @@ class CommentRepository {
                     .collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
                     .document(postId)
                     .collection(AppConstants.FIRESTORE.COMMENT_COLLECTION)
+                    .orderBy(AppConstants.FIRESTORE.DATE_COMMENT_KEY, Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener {
                         val listComments = mutableListOf<CommentModel>()
                         for(doc in it.documents){
                             val comment = CommentModel(doc.data as Map<String, Any>)
-                            if(comment.userId == userId){
+                            if(comment.userId == currentUserId){
                                 listComments.add(0, comment)
                             }
                             else{

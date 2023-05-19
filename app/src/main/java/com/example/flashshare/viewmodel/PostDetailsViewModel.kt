@@ -9,6 +9,7 @@ import com.example.flashshare.model.CommentModel
 import com.example.flashshare.model.LikedPostModel
 import com.example.flashshare.model.PostModel
 import com.example.flashshare.model.ResultModel
+import com.example.flashshare.model.UserModel
 import com.example.flashshare.service.AppConstants
 import com.example.flashshare.service.repository.CommentRepository
 import com.example.flashshare.service.repository.LikedPostsRepository
@@ -42,6 +43,9 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
     private val _changeLikeProcess = MutableLiveData<ResultModel<Unit>>()
     val changeLikeProcess: LiveData<ResultModel<Unit>> = _changeLikeProcess
 
+    private val _loadUserProcess = MutableLiveData<ResultModel<UserModel>>()
+    val loadUserProcess: LiveData<ResultModel<UserModel>> = _loadUserProcess
+
     private var uId: String = sharedPreferences.get(AppConstants.SHARED.USER_ID)
     private var isLikedPost: Boolean = false
 
@@ -72,13 +76,17 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
 
     fun getComments(postId: String){
         viewModelScope.launch {
-            _loadCommentsProcess.value = commentRepository.getComments(uId, postId)
+            val result = commentRepository.getComments(uId, postId, uId)
+            _loadCommentsProcess.value = result
+            getUserDataForComment(result)
         }
     }
 
     fun getComments(userId: String, postId: String){
         viewModelScope.launch {
-            _loadCommentsProcess.value = commentRepository.getComments(userId, postId)
+            val result = commentRepository.getComments(userId, postId, uId)
+            _loadCommentsProcess.value = result
+            getUserDataForComment(result)
         }
     }
 
@@ -117,6 +125,31 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
             val result = likedPostsRepository.checkLikedPost(userId, postId, LikedPostModel(uId))
             isLikedPost = if(result is ResultModel.Success) result.data else false
             _isLiked.value = result
+        }
+    }
+
+    fun getUserData(userId: String){
+        viewModelScope.launch {
+            _loadUserProcess.value = userRepository.getUser(userId)
+        }
+    }
+
+    private fun getUserDataForComment(result: ResultModel<List<CommentModel>>){
+        viewModelScope.launch {
+            if(result is ResultModel.Success){
+                val listComment = mutableListOf<CommentModel>()
+                for(item in result.data){
+                    val user = userRepository.getUser(item.userId)
+                    if(user is ResultModel.Success){
+                        item.userName = user.data.name
+                        item.urlUserPhoto = user.data.urlPhotoProfile ?: ""
+                        listComment.add(item)
+                    }
+                }
+                _loadCommentsProcess.value = ResultModel.Success(listComment)
+            }else{
+                _loadCommentsProcess.value = result
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ class CommentAdapter(var context: Context, private var commentList: List<Comment
         fun bind(comment: CommentModel, context: Context){
 
             val spannableStringBuilder = SpannableStringBuilder()
-            spannableStringBuilder.append(comment.userName)
+            spannableStringBuilder.append(comment.userName+": ")
             spannableStringBuilder.append(comment.description)
 
             val boldSpan = StyleSpan(Typeface.BOLD)
@@ -55,8 +55,8 @@ class CommentAdapter(var context: Context, private var commentList: List<Comment
     }
 
     fun updateCommentsList(list: List<CommentModel>) {
-        println("TESTE: updateCommentsList")
         commentList = list
+        println("TESTE: updateCommentsList: $list")
         notifyDataSetChanged()
     }
 
