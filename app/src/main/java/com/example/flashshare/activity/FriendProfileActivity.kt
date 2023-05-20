@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.flashshare.R
 import com.example.flashshare.activity.adapter.GridAdapter
@@ -124,6 +125,7 @@ class FriendProfileActivity : AppCompatActivity() {
                     if (adapter != null) {
                         adapter!!.updateItems(it.data)
                     } else {
+                        binding.fiendProfileLayout.profileGridView.layoutManager = GridLayoutManager(this, 3)
                         adapter = GridAdapter(applicationContext, it.data, object : GridListener {
                             override fun onClick(postId: String) {
                                 val intent = Intent(applicationContext, PostDetailsActivity::class.java)
