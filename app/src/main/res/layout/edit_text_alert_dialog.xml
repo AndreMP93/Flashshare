@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingTop="8dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="8dp">
+
+    <EditText
+        android:id="@+id/commentEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/comment"
+        android:inputType="text"
+        android:minHeight="52dp"
+        android:textSize="18sp" />
+</LinearLayout>

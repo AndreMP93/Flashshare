@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.flashshare.R
 import com.example.flashshare.activity.adapter.GridAdapter
@@ -85,6 +86,7 @@ class ProfileFragment : Fragment() {
                 if (adapter != null) {
                     adapter!!.updateItems(it.data)
                 } else {
+                    binding!!.profileGridView.layoutManager = GridLayoutManager(requireContext(), 3)
                     adapter = GridAdapter(requireContext(), it.data, object : GridListener{
                         override fun onClick(postId: String) {
                             val intent = Intent(context, PostDetailsActivity::class.java)

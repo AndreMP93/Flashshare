@@ -7,15 +7,19 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.TextAppearanceSpan
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.marginLeft
+import androidx.core.view.setMargins
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.flashshare.R
 import com.example.flashshare.activity.adapter.CommentAdapter
 import com.example.flashshare.databinding.ActivityPostDetailsBinding
+import com.example.flashshare.databinding.EditTextAlertDialogBinding
 import com.example.flashshare.model.CommentModel
 import com.example.flashshare.model.PostModel
 import com.example.flashshare.model.ResultModel
@@ -195,20 +199,15 @@ class PostDetailsActivity : AppCompatActivity() {
     }
 
     private fun showCommentAlertDialog() {
-        val inputEditText = EditText(this)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            inputEditText.setTextAppearance(R.style.DefaultEditText)
-        }
-
+        val view = EditTextAlertDialogBinding.inflate(layoutInflater)
 
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle(getString(R.string.comment))
         alertDialogBuilder.setMessage(getString(R.string.input_comment))
-        alertDialogBuilder.setView(inputEditText)
-
+        alertDialogBuilder.setView(view.root)
         alertDialogBuilder.setPositiveButton(getString(R.string.positive_button)) { dialog, which ->
             val comment = CommentModel()
-            comment.description = inputEditText.text.toString()
+            comment.description = view.commentEditText.text.toString()
             comment.date = Calendar.getInstance().timeInMillis.toString()
             viewModel.createComments(friendId!!, postId, comment)
         }

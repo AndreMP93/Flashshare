@@ -12,53 +12,35 @@ import com.bumptech.glide.request.transition.Transition
 
 class CustomScaleType {
 
-    companion object{
-        fun loadImageWithApplyCustomScaleType(imageView: ImageView, urlImage: String, context: Context){
-            imageView.viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    imageView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+    companion object {
+        fun applyCustomScaleType(imageView: ImageView, drawable: Drawable) {
+            val originalWidth = drawable.intrinsicWidth
+            val originalHeight = drawable.intrinsicHeight
 
-                    val targetWidth = imageView.width
-                    val targetHeight = imageView.height
+            val targetHeight = imageView.height
+            val targetWidth = imageView.width
 
-                    Glide.with(context)
-                        .load(urlImage)
-                        .into(object : CustomTarget<Drawable>() {
-                            override fun onResourceReady(
-                                resource: Drawable,
-                                transition: Transition<in Drawable>?
-                            ) {
-                                val originalWidth = resource.intrinsicWidth
-                                val originalHeight = resource.intrinsicHeight
+            val scaledDrawable: Drawable
 
-                                if (originalWidth > originalHeight) {
-                                    val scaleFactor = targetHeight.toFloat() / originalHeight
-                                    val scaledWidth = (originalWidth * scaleFactor).toInt()
-                                    resource.setBounds(0, 0, scaledWidth, targetHeight)
+            scaledDrawable = if (originalWidth > originalHeight) {
+                val scaleFactor = targetHeight.toFloat() / originalHeight
+                val scaledWidth = (originalWidth * scaleFactor).toInt()
+                drawable.setBounds(0, 0, scaledWidth, targetHeight)
 
-                                    imageView.scaleType = ImageView.ScaleType.CENTER_CROP
-                                    imageView.setImageDrawable(resource)
-                                } else {
-                                    val scaleFactor = targetWidth.toFloat() / originalWidth
-                                    val scaledHeight = (originalHeight * scaleFactor).toInt()
-                                    resource.setBounds(0, 0, targetWidth, scaledHeight)
+                drawable
 
-                                    imageView.scaleType = ImageView.ScaleType.CENTER_CROP
-                                    imageView.setImageDrawable(resource)
-                                }
+            } else {
+                val scaleFactor = targetWidth.toFloat() / originalWidth
+                val scaledHeight = (originalHeight * scaleFactor).toInt()
+                drawable.setBounds(0, 0, targetWidth, scaledHeight)
 
-                                val layoutParams = imageView.layoutParams
-                                layoutParams.height = imageView.width
-                                imageView.layoutParams = layoutParams
+                drawable
+            }
 
-                            }
-                            override fun onLoadCleared(placeholder: Drawable?) {
-                            }
-
-                        })
-                }
-            })
+            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+            imageView.setImageDrawable(scaledDrawable)
         }
+
+
     }
 }
