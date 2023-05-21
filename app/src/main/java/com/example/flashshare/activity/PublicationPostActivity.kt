@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -13,7 +14,6 @@ import com.example.flashshare.model.PostModel
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.service.AppConstants
 import com.example.flashshare.viewmodel.PublicationPostViewModel
-import java.time.LocalDate
 import java.util.Calendar
 
 class PublicationPostActivity : AppCompatActivity() {
@@ -21,6 +21,7 @@ class PublicationPostActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPublicationPostBinding
     private lateinit var imageUri: Uri
     private lateinit var viewModel: PublicationPostViewModel
+    private var isPublicationProcess = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +69,9 @@ class PublicationPostActivity : AppCompatActivity() {
                 post.datePublication = Calendar.getInstance().timeInMillis.toString()
                 post.id = ""
                 post.urlPhotoPost = ""
-                viewModel.publicationPost(post, imageUri)
+                if(!isPublicationProcess){
+                    viewModel.publicationPost(post, imageUri)
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -80,8 +83,15 @@ class PublicationPostActivity : AppCompatActivity() {
                 is ResultModel.Success -> {
                     finish()
                 }
-                is ResultModel.Error -> Toast.makeText(applicationContext, it.message, Toast.LENGTH_LONG).show()
-                is ResultModel.Loading -> {}
+                is ResultModel.Error -> {
+                    isPublicationProcess = false
+                    binding.progressBarPublication.visibility = View.GONE
+                    Toast.makeText(applicationContext, it.message, Toast.LENGTH_LONG).show()
+                }
+                is ResultModel.Loading -> {
+                    isPublicationProcess = true
+                    binding.progressBarPublication.visibility = View.VISIBLE
+                }
             }
         }
     }

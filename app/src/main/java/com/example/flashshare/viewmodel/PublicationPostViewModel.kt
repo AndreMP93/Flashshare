@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.flashshare.R
 import com.example.flashshare.model.PostModel
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.service.AppConstants
@@ -13,7 +14,7 @@ import com.example.flashshare.service.repository.PostRepository
 import com.example.flashshare.service.repository.local.SecurityPreferences
 import kotlinx.coroutines.launch
 
-class PublicationPostViewModel(application: Application): AndroidViewModel(application) {
+class PublicationPostViewModel(private val application: Application): AndroidViewModel(application) {
     private val postRepository = PostRepository()
     private val sharedPreferences = SecurityPreferences(application.applicationContext)
 
@@ -22,10 +23,13 @@ class PublicationPostViewModel(application: Application): AndroidViewModel(appli
 
     fun publicationPost(post: PostModel, image: Uri){
         viewModelScope.launch {
+            _publicationProcess.value = ResultModel.Loading
             val userId = sharedPreferences.get(AppConstants.SHARED.USER_ID)
-            if(userId!=null && userId!= ""){
+            if(userId!= ""){
                 post.userId = userId
                 _publicationProcess.value = postRepository.publicationPost(userId, post, image)
+            }else{
+                _publicationProcess.value = ResultModel.Error(application.getString(R.string.error_message))
             }
 
 

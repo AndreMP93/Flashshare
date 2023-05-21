@@ -27,6 +27,9 @@ class FriendProfileActivity : AppCompatActivity() {
         binding = ActivityFriendProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.fiendProfileLayout.actionProfileButton.text = getString(R.string.follow_button)
+        binding.fiendProfileLayout.actionProfileButton.isClickable = false
+
         viewModel = ViewModelProvider(this)[FriendProfileViewModel::class.java]
 
         val bundle = intent.extras
@@ -79,6 +82,7 @@ class FriendProfileActivity : AppCompatActivity() {
         }
         viewModel.isFollowingUser.observe(this){
             if(it is ResultModel.Success){
+                binding.fiendProfileLayout.actionProfileButton.isClickable = true
                 if(it.data){
                     binding.fiendProfileLayout.actionProfileButton.text = getString(R.string.unfllow_button)
                     binding.fiendProfileLayout.actionProfileButton.setOnClickListener {
@@ -91,7 +95,9 @@ class FriendProfileActivity : AppCompatActivity() {
                     }
                 }
             }else{
+                binding.fiendProfileLayout.actionProfileButton.isClickable = false
                 showToast(it.toString())
+                finish()
             }
         }
 

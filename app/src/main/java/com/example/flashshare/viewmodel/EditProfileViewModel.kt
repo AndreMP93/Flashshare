@@ -57,12 +57,14 @@ class EditProfileViewModel(application: Application): AndroidViewModel(applicati
 
     fun update(user: UserModel){
         viewModelScope.launch {
+            _updateProcess.value = ResultModel.Loading
             _updateProcess.value = userRepository.updateUser(user)
         }
     }
 
     fun savePhotoProfile(user: UserModel, image: Uri){
         viewModelScope.launch {
+            _savePhotoProcess.value = ResultModel.Loading
             val result = userRepository.savePhotoProfile(user, image)
             _savePhotoProcess.value = result
             if(result is ResultModel.Success){
