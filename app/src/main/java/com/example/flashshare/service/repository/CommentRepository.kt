@@ -26,8 +26,9 @@ class CommentRepository {
         return suspendCoroutine { continuation ->
             try {
                 val documentRef = getRefFireStore(userId, postId)
-                comment.id = documentRef.id
-                documentRef.add(comment.toMap())
+                comment.id = documentRef.document().id
+                documentRef.document(comment.id)
+                    .set(comment.toMap())
                     .addOnSuccessListener {
                         continuation.resume(ResultModel.Success(Unit))
                     }
@@ -61,11 +62,7 @@ class CommentRepository {
     suspend fun getComments(userId: String, postId: String, currentUserId: String): ResultModel<List<CommentModel>>{
         return suspendCoroutine { continuation ->
             try {
-                db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
-                    .document(userId)
-                    .collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
-                    .document(postId)
-                    .collection(AppConstants.FIRESTORE.COMMENT_COLLECTION)
+                getRefFireStore(userId, postId)
                     .orderBy(AppConstants.FIRESTORE.DATE_COMMENT_KEY, Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener {

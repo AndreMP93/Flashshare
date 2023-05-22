@@ -4,6 +4,7 @@ import android.net.Uri
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.model.UserModel
 import com.example.flashshare.service.AppConstants
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -17,7 +18,7 @@ class UserRepository{
     suspend fun addUser(user: UserModel): ResultModel<Unit> {
         return suspendCoroutine {continuation ->
             try {
-                db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
+                getUsersRef()
                     .document(user.id)
                     .set(user)
                     .addOnSuccessListener {
@@ -36,7 +37,7 @@ class UserRepository{
     suspend fun getUser(userId: String): ResultModel<UserModel> {
         return suspendCoroutine { continuation ->
             try {
-                db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
+                getUsersRef()
                     .document(userId)
                     .get()
                     .addOnSuccessListener { document ->
@@ -61,7 +62,7 @@ class UserRepository{
     suspend fun updateUser(user: UserModel): ResultModel<Unit>{
         return suspendCoroutine {continuation ->
             try {
-                db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
+                getUsersRef()
                     .document(user.id)
                     .update(user.toMap())
                     .addOnSuccessListener {
@@ -103,7 +104,7 @@ class UserRepository{
 
     suspend fun getUsers(text: String): ResultModel<List<UserModel>>{
         return suspendCoroutine {continuation ->
-            val query = db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
+            val query = getUsersRef()
                 .orderBy(AppConstants.FIRESTORE.NAME_UPPERCASE)
                 .startAt(text)
                 .endAt(text + "\uf8ff")
@@ -120,5 +121,9 @@ class UserRepository{
                     continuation.resumeWith(Result.success(ResultModel.Error(it.message)))
                 }
         }
+    }
+
+    private fun getUsersRef(): CollectionReference {
+        return db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
     }
 }

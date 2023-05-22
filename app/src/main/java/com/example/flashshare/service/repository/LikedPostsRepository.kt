@@ -74,9 +74,7 @@ class LikedPostsRepository {
     }
 
     private fun getFireStoreRef(userId: String, postId: String): CollectionReference {
-        return db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
-            .document(userId)
-            .collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
+        return db.collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
             .document(postId)
             .collection(AppConstants.FIRESTORE.LIKED_POSTS_COLLECTION)
     }

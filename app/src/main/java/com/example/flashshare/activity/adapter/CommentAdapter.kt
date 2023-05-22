@@ -56,7 +56,6 @@ class CommentAdapter(var context: Context, private var commentList: List<Comment
 
     fun updateCommentsList(list: List<CommentModel>) {
         commentList = list
-        println("TESTE: updateCommentsList: $list")
         notifyDataSetChanged()
     }
 

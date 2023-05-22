@@ -52,25 +52,25 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
 
     fun getPost(postId: String){
         viewModelScope.launch {
-            _loadPostProcess.value = postRepository.getPost(uId, postId)
+            _loadPostProcess.value = postRepository.getPost(postId)
         }
     }
 
     fun getPost(userId: String, postId: String){
         viewModelScope.launch {
-            _loadPostProcess.value = postRepository.getPost(userId, postId)
+            _loadPostProcess.value = postRepository.getPost(postId)
         }
     }
 
     fun updatePost(postId: String, post: PostModel){
         viewModelScope.launch {
-            val result = postRepository.updatePost(uId, postId, post)
+            val result = postRepository.updatePost(postId, post)
         }
     }
 
     fun updatePost(userId: String, postId: String, post: PostModel){
         viewModelScope.launch {
-            _updatePostProcess.value = postRepository.updatePost(userId, postId, post)
+            _updatePostProcess.value = postRepository.updatePost(postId, post)
         }
     }
 

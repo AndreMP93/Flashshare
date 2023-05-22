@@ -3,6 +3,7 @@ package com.example.flashshare.service.repository
 import com.example.flashshare.model.FollowModel
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.service.AppConstants
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlin.coroutines.resume
@@ -15,9 +16,7 @@ class FollowRepository {
     suspend fun getQuantityFollowers(userId: String): ResultModel<Int>{
         return suspendCoroutine {continuation ->
             try{
-                db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
-                    .document(userId)
-                    .collection(AppConstants.FIRESTORE.FOLLOWERS_COLLECTION)
+                getFollowRef(userId)
                     .get()
                     .addOnSuccessListener {
                         continuation.resume(ResultModel.Success(it.documents.size))
@@ -35,9 +34,7 @@ class FollowRepository {
     suspend fun getQuantityFollowing(userId: String): ResultModel<Int>{
         return suspendCoroutine {continuation ->
             try{
-                db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
-                    .document(userId)
-                    .collection(AppConstants.FIRESTORE.FOLLOWING_COLLECTION)
+                getFollowRef(userId)
                     .get()
                     .addOnSuccessListener {
                         continuation.resume(ResultModel.Success(it.documents.size))
@@ -55,9 +52,7 @@ class FollowRepository {
     suspend fun checkFollowUser(userId: String, friendId: String): ResultModel<Boolean>{
         return suspendCoroutine { continuation ->
             try {
-                db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
-                    .document(userId)
-                    .collection(AppConstants.FIRESTORE.FOLLOWING_COLLECTION)
+                getFollowRef(userId)
                     .document(friendId)
                     .get()
                     .addOnCompleteListener {
@@ -76,15 +71,11 @@ class FollowRepository {
     suspend fun followUser(userId: String, friendId: String): ResultModel<Unit>{
         return suspendCoroutine { continuation ->
             try {
-                val refUser = db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
-                    .document(userId)
-                    .collection(AppConstants.FIRESTORE.FOLLOWING_COLLECTION)
+                val refUser = getFollowRef(userId)
                     .document(friendId)
                     .set(FollowModel(friendId))
 
-                val refFriend = db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
-                    .document(friendId)
-                    .collection(AppConstants.FIRESTORE.FOLLOWERS_COLLECTION)
+                val refFriend = getFollowRef(friendId)
                     .document(userId)
                     .set(FollowModel(userId))
 
@@ -111,16 +102,12 @@ class FollowRepository {
     suspend fun unfollowUser(userId: String, friendId: String): ResultModel<Unit>{
         return suspendCoroutine { continuation ->
             try {
-                val refUser = db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
-                    .document(userId)
-                    .collection(AppConstants.FIRESTORE.FOLLOWING_COLLECTION)
+                val refUser = getFollowRef(userId)
                     .document(friendId)
                     .delete()
 
 
-                val refFriend = db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
-                    .document(friendId)
-                    .collection(AppConstants.FIRESTORE.FOLLOWERS_COLLECTION)
+                val refFriend = getFollowRef(friendId)
                     .document(userId)
                     .delete()
 
@@ -142,5 +129,11 @@ class FollowRepository {
                 continuation.resume(ResultModel.Error(e.message))
             }
         }
+    }
+
+    private fun getFollowRef(userId: String): CollectionReference {
+        return db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
+            .document(userId)
+            .collection(AppConstants.FIRESTORE.FOLLOWERS_COLLECTION)
     }
 }

@@ -8,8 +8,7 @@ class AuthRepository() {
 
     suspend fun doLogin(email:String, password: String) = firebaseAuthService.doLogin(email, password)
 
-    suspend fun registerUser(user: UserModel) =
-        firebaseAuthService.registerUser(user)
+    suspend fun registerUser(user: UserModel) = firebaseAuthService.registerUser(user)
 
     suspend fun logout() = firebaseAuthService.logout()
 

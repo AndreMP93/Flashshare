@@ -1,6 +1,7 @@
 package com.example.flashshare.service.repository
 
 import android.net.Uri
+import com.example.flashshare.model.FollowModel
 import com.example.flashshare.model.PostModel
 import com.example.flashshare.model.ResultModel
 import com.example.flashshare.service.AppConstants
@@ -17,16 +18,15 @@ class PostRepository {
     private val db = Firebase.firestore
     private val storage = Firebase.storage
 
-    private fun getPostReference(userId: String): CollectionReference {
-        return db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
-            .document(userId)
-            .collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
+    private fun getPostReference(): CollectionReference {
+        return db.collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
     }
 
     suspend fun getPosts(userId: String): ResultModel<List<PostModel>> {
         return suspendCoroutine { continuation ->
             try {
-                getPostReference(userId)
+                getPostReference()
+                    .whereEqualTo(AppConstants.FIRESTORE.USER_ID_KEY, userId)
                     .orderBy(AppConstants.FIRESTORE.DATE_PUBLICATION_KEY, Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener {
@@ -42,10 +42,10 @@ class PostRepository {
         }
     }
 
-    suspend fun getPost(userId: String, postId: String): ResultModel<PostModel> {
+    suspend fun getPost(postId: String): ResultModel<PostModel> {
         return suspendCoroutine { continuation ->
             try {
-                getPostReference(userId)
+                getPostReference()
                     .document(postId)
                     .get()
                     .addOnSuccessListener {
@@ -61,10 +61,10 @@ class PostRepository {
         }
     }
 
-    suspend fun updatePost(userId: String, postId: String, post: PostModel): ResultModel<Unit> {
+    suspend fun updatePost(postId: String, post: PostModel): ResultModel<Unit> {
         return suspendCoroutine { continuation ->
             try {
-                getPostReference(userId)
+                getPostReference()
                     .document(postId)
                     .update(post.toMap())
                     .addOnSuccessListener {
@@ -83,7 +83,8 @@ class PostRepository {
     suspend fun getPostsQuantity(userId: String): ResultModel<Int> {
         return suspendCoroutine { continuation ->
             try {
-                getPostReference(userId)
+                getPostReference()
+                    .whereEqualTo(AppConstants.FIRESTORE.USER_ID_KEY, userId)
                     .get()
                     .addOnSuccessListener {
                         continuation.resume(ResultModel.Success(it.documents.size))
@@ -97,7 +98,7 @@ class PostRepository {
     suspend fun publicationPost(userId: String, post: PostModel, image: Uri): ResultModel<Unit> {
         return suspendCoroutine { continuation ->
             try {
-                getPostReference(userId)
+                getPostReference()
                     .add(post.toMap())
                     .addOnSuccessListener {
                         post.id = it.id
@@ -140,6 +141,38 @@ class PostRepository {
                 }
         } catch (e: Exception) {
             updateFireStore(null)
+        }
+    }
+
+    suspend fun getFeed(userId: String): ResultModel<List<PostModel>>{
+        return suspendCoroutine { continuation ->
+            db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
+                .document(userId)
+                .collection(AppConstants.FIRESTORE.FOLLOWING_COLLECTION)
+                .get()
+                .addOnSuccessListener { followResult ->
+                    val followingIDs = followResult.documents.map {
+                        it.id
+                    }
+                    db.collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
+                        .whereIn(AppConstants.FIRESTORE.USER_ID_KEY, followingIDs)
+                        .get()
+                        .addOnSuccessListener {feedResult ->
+                            val posts = mutableListOf<PostModel>()
+                            for(doc in feedResult.documents){
+                                val post = PostModel(doc.data as Map<String, Any>)
+                                posts.add(post)
+                            }
+                            continuation.resume(ResultModel.Success(posts))
+                        }
+                        .addOnFailureListener {
+                            continuation.resume(ResultModel.Error(it.message))
+                        }
+                }
+                .addOnFailureListener {
+                    continuation.resume(ResultModel.Error(it.message))
+                }
+
         }
     }
 }
