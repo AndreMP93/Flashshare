@@ -107,22 +107,22 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
         }
     }
 
-    fun changeLike(userId: String, postId: String){
+    fun changeLike(postId: String){
         viewModelScope.launch {
             if(isLikedPost){
                 isLikedPost = false
-                _changeLikeProcess.value = likedPostsRepository.removeLike(userId, postId, LikedPostModel(uId))
+                _changeLikeProcess.value = likedPostsRepository.removeLike(postId, LikedPostModel(uId))
             }else{
                 isLikedPost = true
-                _changeLikeProcess.value = likedPostsRepository.addLike(userId, postId, LikedPostModel(uId))
+                _changeLikeProcess.value = likedPostsRepository.addLike(postId, LikedPostModel(uId))
             }
-            checkLikedPost(userId, postId)
+            checkLikedPost(postId)
         }
     }
 
-    fun checkLikedPost(userId: String, postId: String){
+    fun checkLikedPost(postId: String){
         viewModelScope.launch {
-            val result = likedPostsRepository.checkLikedPost(userId, postId, LikedPostModel(uId))
+            val result = likedPostsRepository.checkLikedPost(postId, LikedPostModel(uId))
             isLikedPost = if(result is ResultModel.Success) result.data else false
             _isLiked.value = result
         }

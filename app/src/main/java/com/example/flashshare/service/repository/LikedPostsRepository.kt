@@ -13,10 +13,10 @@ class LikedPostsRepository {
 
     private val db = Firebase.firestore
 
-    suspend fun addLike(userId: String, postId: String, likedPost: LikedPostModel): ResultModel<Unit>{
+    suspend fun addLike(postId: String, likedPost: LikedPostModel): ResultModel<Unit>{
         return suspendCoroutine { continuation ->
             try {
-                getFireStoreRef(userId, postId)
+                getFireStoreRef(postId)
                     .document(likedPost.userId)
                     .set(likedPost.toMap())
                     .addOnSuccessListener {
@@ -32,10 +32,10 @@ class LikedPostsRepository {
         }
     }
 
-    suspend fun removeLike(userId: String, postId: String, likedPostModel: LikedPostModel): ResultModel<Unit>{
+    suspend fun removeLike(postId: String, likedPostModel: LikedPostModel): ResultModel<Unit>{
         return suspendCoroutine { continuation ->
             try {
-                getFireStoreRef(userId, postId)
+                getFireStoreRef(postId)
                     .document(likedPostModel.userId)
                     .delete()
                     .addOnSuccessListener {
@@ -51,10 +51,10 @@ class LikedPostsRepository {
         }
     }
 
-    suspend fun checkLikedPost(userId: String, postId: String, likedPostModel: LikedPostModel): ResultModel<Boolean>{
+    suspend fun checkLikedPost(postId: String, likedPostModel: LikedPostModel): ResultModel<Boolean>{
         return suspendCoroutine { continuation ->
             try {
-                getFireStoreRef(userId, postId)
+                getFireStoreRef(postId)
                     .whereEqualTo(AppConstants.FIRESTORE.USER_ID_KEY, likedPostModel.userId)
                     .get()
                     .addOnSuccessListener {
@@ -73,7 +73,7 @@ class LikedPostsRepository {
         }
     }
 
-    private fun getFireStoreRef(userId: String, postId: String): CollectionReference {
+    private fun getFireStoreRef(postId: String): CollectionReference {
         return db.collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
             .document(postId)
             .collection(AppConstants.FIRESTORE.LIKED_POSTS_COLLECTION)

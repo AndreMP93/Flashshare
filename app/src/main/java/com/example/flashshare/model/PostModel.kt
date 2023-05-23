@@ -2,6 +2,8 @@ package com.example.flashshare.model
 
 import android.content.ClipDescription
 import com.example.flashshare.service.AppConstants
+import com.google.firebase.firestore.Exclude
+import java.io.Serializable
 
 class PostModel() {
     lateinit var id: String
@@ -9,6 +11,11 @@ class PostModel() {
     lateinit var urlPhotoPost: String
     lateinit var description: String
     lateinit var datePublication: String
+
+    @Exclude @get: Exclude
+    lateinit var userData: UserModel
+    @Exclude @get: Exclude
+    var isLiked: Boolean = false
 
     constructor(postId: String, uId: String, urlPhoto: String, description: String, date: String):this(){
         this.id = postId
@@ -35,5 +42,9 @@ class PostModel() {
         map[AppConstants.FIRESTORE.DESCRIPTION_KEY] = this.description
         map[AppConstants.FIRESTORE.DATE_PUBLICATION_KEY] = this.datePublication
         return map
+    }
+
+    fun checkUserDataInitialization(): Boolean{
+        return ::userData.isInitialized
     }
 }

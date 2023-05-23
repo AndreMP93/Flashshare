@@ -96,7 +96,7 @@ class PostDetailsActivity : AppCompatActivity() {
         viewModel.changeLikeProcess.observe(this) {
             when (it) {
                 is ResultModel.Success -> {
-                    viewModel.checkLikedPost(friendId!!, postId)
+                    viewModel.checkLikedPost(postId)
                 }
 
                 is ResultModel.Error -> {}
@@ -173,7 +173,7 @@ class PostDetailsActivity : AppCompatActivity() {
     private fun setButtons() {
         binding.likeImage.setOnClickListener {
             if (friendId != "" && friendId != null) {
-                viewModel.changeLike(friendId!!, postId)
+                viewModel.changeLike(postId)
             }
         }
 
@@ -246,7 +246,7 @@ class PostDetailsActivity : AppCompatActivity() {
     private fun getPostDetails() {
         if (friendId != null && friendId != "") {
             viewModel.getPost(friendId!!, postId)
-            viewModel.checkLikedPost(friendId!!, postId)
+            viewModel.checkLikedPost(postId)
         } else {
             viewModel.getPost(postId)
 
