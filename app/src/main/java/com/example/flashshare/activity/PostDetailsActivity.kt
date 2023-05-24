@@ -1,18 +1,16 @@
 package com.example.flashshare.activity
 
 import android.content.DialogInterface
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.TextAppearanceSpan
-import android.view.ViewGroup
-import android.widget.EditText
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.marginLeft
-import androidx.core.view.setMargins
+import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -35,13 +33,20 @@ class PostDetailsActivity : AppCompatActivity() {
     private lateinit var postDetails: PostModel
     private var postId: String = ""
     private var friendId: String? = ""
-    private var commentList = mutableListOf<CommentModel>()
+    private var commentList: List<CommentModel> = mutableListOf()
     private lateinit var adapter: CommentAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPostDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if(friendId == ""){
+            binding.optionsPost.visibility = View.VISIBLE
+            binding.optionsPost.setOnClickListener {
+                setOptionMenuPost(binding.optionsPost)
+            }
+        }
 
         viewModel = ViewModelProvider(this)[PostDetailsViewModel::class.java]
 
@@ -129,7 +134,8 @@ class PostDetailsActivity : AppCompatActivity() {
         viewModel.loadCommentsProcess.observe(this) {
             when (it) {
                 is ResultModel.Success -> {
-                    adapter.updateCommentsList(it.data)
+                    commentList = it.data
+                    adapter.updateCommentsList(commentList)
                 }
 
                 is ResultModel.Error -> {}
@@ -156,18 +162,19 @@ class PostDetailsActivity : AppCompatActivity() {
     }
 
     private fun setRecyclerView() {
-        adapter = CommentAdapter(applicationContext, commentList, object : CommentListener {
-            override fun onClickEdit(commentId: String) {
-                println("EDIT")
+        adapter = CommentAdapter(this, commentList, object : CommentListener {
+            override fun onClickEdit(comment: CommentModel) {
+                showCommentAlertDialog(comment)
             }
 
             override fun onClickDelete(commentId: String) {
-                println("DELETE")
+                viewModel.removeComment(postId, commentId)
             }
         })
 
         binding.commentRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
         binding.commentRecyclerView.adapter = adapter
+
     }
 
     private fun setButtons() {
@@ -198,18 +205,27 @@ class PostDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCommentAlertDialog() {
+    private fun showCommentAlertDialog(commentModel: CommentModel? = null) {
         val view = EditTextAlertDialogBinding.inflate(layoutInflater)
+        if(commentModel!=null){
+            view.commentEditText.setText(commentModel.description)
+        }
 
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle(getString(R.string.comment))
         alertDialogBuilder.setMessage(getString(R.string.input_comment))
         alertDialogBuilder.setView(view.root)
         alertDialogBuilder.setPositiveButton(getString(R.string.positive_button)) { dialog, which ->
-            val comment = CommentModel()
-            comment.description = view.commentEditText.text.toString()
-            comment.date = Calendar.getInstance().timeInMillis.toString()
-            viewModel.createComments(friendId!!, postId, comment)
+            if(commentModel == null){
+                val comment = CommentModel()
+                comment.description = view.commentEditText.text.toString()
+                comment.date = Calendar.getInstance().timeInMillis.toString()
+                viewModel.createComments(postId, comment)
+            }else{
+                commentModel.description = view.commentEditText.text.toString()
+                viewModel.updateComment(postId, commentModel.id, commentModel)
+            }
+
         }
         alertDialogBuilder.setNegativeButton(getString(R.string.negative_button)) { dialog, which ->
             dialog.dismiss()
@@ -254,11 +270,7 @@ class PostDetailsActivity : AppCompatActivity() {
     }
 
     private fun getComments() {
-        if (friendId != null && friendId != "") {
-            viewModel.getComments(friendId!!, postId)
-        } else {
-            viewModel.getComments(postId)
-        }
+        viewModel.getComments(postId)
     }
 
     private fun setToolBar() {
@@ -266,5 +278,27 @@ class PostDetailsActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbarPostDetails.mainToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+    }
+
+
+    private fun setOptionMenuPost(view: View){
+        val popupMenu = PopupMenu(this , view)
+        popupMenu.inflate(R.menu.menu_options_post)
+        popupMenu.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener{
+            override fun onMenuItemClick(item: MenuItem?): Boolean {
+                when(item?.itemId){
+                    R.id.delete_option -> {
+
+                        return true
+                    }
+                    R.id.edit_option -> {
+
+                        return true
+                    }
+                }
+                return false
+            }
+        })
+        popupMenu.show()
     }
 }

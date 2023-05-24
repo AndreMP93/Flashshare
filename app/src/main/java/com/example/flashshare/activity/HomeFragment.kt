@@ -76,6 +76,7 @@ class HomeFragment : Fragment() {
                 val intent = Intent(context, PostDetailsActivity::class.java)
                 val bundle = Bundle().apply {
                     putString(AppConstants.BUNDLE.POST_ID, post.id)
+                    putString(AppConstants.BUNDLE.USER_ID, post.userId)
                 }
                 intent.putExtras(bundle)
                 startActivity(intent)

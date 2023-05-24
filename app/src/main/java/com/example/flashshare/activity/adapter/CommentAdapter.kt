@@ -6,19 +6,46 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.flashshare.R
 import com.example.flashshare.databinding.CommentItemBinding
 import com.example.flashshare.model.CommentModel
 import com.example.flashshare.service.listener.CommentListener
 
+
 class CommentAdapter(var context: Context, private var commentList: List<CommentModel>, private var listener: CommentListener): RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
-    class CommentViewHolder(private val itemBinding: CommentItemBinding, private val listener: CommentListener)
+    class CommentViewHolder(val itemBinding: CommentItemBinding, private val listener: CommentListener)
         : RecyclerView.ViewHolder(itemBinding.root){
-
         fun bind(comment: CommentModel, context: Context){
+            if(comment.isMyComment){
+                itemBinding.optionsComment.visibility = View.VISIBLE
+                itemBinding.optionsComment.setOnClickListener {
+                    val popupMenu = PopupMenu(context , itemBinding.optionsComment)
+                    popupMenu.inflate(R.menu.menu_options_post)
+                    popupMenu.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener{
+                        override fun onMenuItemClick(item: MenuItem?): Boolean {
+                            when(item?.itemId){
+                                R.id.delete_option -> {
+                                    listener.onClickDelete(comment.id)
+                                    return true
+                                }
+                                R.id.edit_option -> {
+                                    listener.onClickEdit(comment)
+                                    return true
+                                }
+                            }
+                            return false
+                        }
+                    })
+                    popupMenu.show()
+                }
+            }
 
             val spannableStringBuilder = SpannableStringBuilder()
             spannableStringBuilder.append(comment.userName+": ")
@@ -38,7 +65,8 @@ class CommentAdapter(var context: Context, private var commentList: List<Comment
             }
 
         }
-    }
+
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val inflater = LayoutInflater.from(parent.context)

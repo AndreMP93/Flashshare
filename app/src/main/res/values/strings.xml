@@ -14,6 +14,8 @@
     <string name="search">Pesquisa</string>
     <string name="posts">Postagens</string>
     <string name="profile">Perfil</string>
+    <string name="edit_button">Editar</string>
+    <string name="delete_button">Excluir</string>
 
     <string name="gallery_button">Abrir Galeria</string>
     <string name="camera_button">Abrir Câmera</string>

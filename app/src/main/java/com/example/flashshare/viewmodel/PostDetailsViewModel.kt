@@ -68,42 +68,41 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
         }
     }
 
-    fun updatePost(userId: String, postId: String, post: PostModel){
-        viewModelScope.launch {
-            _updatePostProcess.value = postRepository.updatePost(postId, post)
-        }
-    }
-
     fun getComments(postId: String){
         viewModelScope.launch {
-            val result = commentRepository.getComments(uId, postId, uId)
-            _loadCommentsProcess.value = result
-            getUserDataForComment(result)
-        }
-    }
-
-    fun getComments(userId: String, postId: String){
-        viewModelScope.launch {
-            val result = commentRepository.getComments(userId, postId, uId)
+            val result = commentRepository.getComments(postId, uId)
             _loadCommentsProcess.value = result
             getUserDataForComment(result)
         }
     }
 
 
-    fun createComments(userId: String, postId: String, comment: CommentModel){
+    fun createComments(postId: String, comment: CommentModel){
         viewModelScope.launch {
             val result = userRepository.getUser(uId)
             if(result is ResultModel.Success){
                 comment.userId = uId
                 comment.userName = result.data.name
                 comment.urlUserPhoto = result.data.urlPhotoProfile ?: ""
-                _createCommentProcess.value = commentRepository.addComment(userId, postId, comment)
+                _createCommentProcess.value = commentRepository.addComment(postId, comment)
             }else{
                 val error = result as ResultModel.Error
                 _createCommentProcess.value = ResultModel.Error(error.message)
             }
 
+        }
+    }
+
+    fun updateComment(postId: String, commentId: String, comment: CommentModel){
+        viewModelScope.launch {
+            commentRepository.updateComment(postId, commentId, comment)
+            getComments(postId)
+        }
+    }
+    fun removeComment(postId: String, commentId: String){
+        viewModelScope.launch {
+            commentRepository.removeComment(postId, commentId)
+            getComments(postId)
         }
     }
 

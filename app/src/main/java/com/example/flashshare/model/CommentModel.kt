@@ -1,6 +1,7 @@
 package com.example.flashshare.model
 
 import com.example.flashshare.service.AppConstants
+import com.google.firebase.firestore.Exclude
 
 class CommentModel() {
     var id = ""
@@ -9,6 +10,9 @@ class CommentModel() {
     var userName: String = ""
     var urlUserPhoto: String = ""
     var date: String = ""
+
+    @Exclude @get: Exclude
+    var isMyComment: Boolean = false
 
     constructor(
         id: String,

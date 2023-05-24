@@ -14,18 +14,16 @@ import kotlin.coroutines.suspendCoroutine
 class CommentRepository {
 
     private val db = Firebase.firestore
-    private fun getRefFireStore(userId: String, postId: String): CollectionReference {
-        return db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
-            .document(userId)
-            .collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
+    private fun getRefFireStore(postId: String): CollectionReference {
+        return db.collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
             .document(postId)
             .collection(AppConstants.FIRESTORE.COMMENT_COLLECTION)
     }
 
-    suspend fun addComment(userId: String, postId: String, comment: CommentModel):ResultModel<Unit>{
+    suspend fun addComment(postId: String, comment: CommentModel):ResultModel<Unit>{
         return suspendCoroutine { continuation ->
             try {
-                val documentRef = getRefFireStore(userId, postId)
+                val documentRef = getRefFireStore(postId)
                 comment.id = documentRef.document().id
                 documentRef.document(comment.id)
                     .set(comment.toMap())
@@ -41,10 +39,10 @@ class CommentRepository {
         }
     }
 
-    suspend fun updateComment(userId: String, postId: String, commentId: String, comment: CommentModel):ResultModel<Unit>{
+    suspend fun updateComment(postId: String, commentId: String, comment: CommentModel):ResultModel<Unit>{
         return suspendCoroutine { continuation ->
             try {
-                getRefFireStore(userId, postId)
+                getRefFireStore(postId)
                     .document(commentId)
                     .update(comment.toMap())
                     .addOnSuccessListener {
@@ -59,10 +57,10 @@ class CommentRepository {
         }
     }
 
-    suspend fun getComments(userId: String, postId: String, currentUserId: String): ResultModel<List<CommentModel>>{
+    suspend fun getComments(postId: String, currentUserId: String): ResultModel<List<CommentModel>>{
         return suspendCoroutine { continuation ->
             try {
-                getRefFireStore(userId, postId)
+                getRefFireStore(postId)
                     .orderBy(AppConstants.FIRESTORE.DATE_COMMENT_KEY, Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener {
@@ -70,6 +68,7 @@ class CommentRepository {
                         for(doc in it.documents){
                             val comment = CommentModel(doc.data as Map<String, Any>)
                             if(comment.userId == currentUserId){
+                                comment.isMyComment = true
                                 listComments.add(0, comment)
                             }
                             else{
@@ -78,6 +77,24 @@ class CommentRepository {
 
                         }
                         continuation.resume(ResultModel.Success(listComments))
+                    }
+            }catch (e: Exception){
+                continuation.resume(ResultModel.Error(e.message))
+            }
+        }
+    }
+
+    suspend fun removeComment(postId: String, commentId: String): ResultModel<Unit>{
+        return suspendCoroutine { continuation ->
+            try {
+                getRefFireStore(postId)
+                    .document(commentId)
+                    .delete()
+                    .addOnSuccessListener {
+                        continuation.resume(ResultModel.Success(Unit))
+                    }
+                    .addOnFailureListener {
+                        continuation.resume(ResultModel.Error(it.message))
                     }
             }catch (e: Exception){
                 continuation.resume(ResultModel.Error(e.message))
