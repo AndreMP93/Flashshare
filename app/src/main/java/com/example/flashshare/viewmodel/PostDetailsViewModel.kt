@@ -28,9 +28,6 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
     private val _loadPostProcess = MutableLiveData<ResultModel<PostModel>>()
     val loadPostProcess: LiveData<ResultModel<PostModel>> = _loadPostProcess
 
-    private val _updatePostProcess = MutableLiveData<ResultModel<Unit>>()
-    val updatePostProcess: LiveData<ResultModel<Unit>> = _updatePostProcess
-
     private val _loadCommentsProcess = MutableLiveData<ResultModel<List<CommentModel>>>()
     val loadCommentsProcess: LiveData<ResultModel<List<CommentModel>>> = _loadCommentsProcess
 
@@ -53,18 +50,6 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
     fun getPost(postId: String){
         viewModelScope.launch {
             _loadPostProcess.value = postRepository.getPost(postId)
-        }
-    }
-
-    fun getPost(userId: String, postId: String){
-        viewModelScope.launch {
-            _loadPostProcess.value = postRepository.getPost(postId)
-        }
-    }
-
-    fun updatePost(postId: String, post: PostModel){
-        viewModelScope.launch {
-            val result = postRepository.updatePost(postId, post)
         }
     }
 
@@ -149,6 +134,12 @@ class PostDetailsViewModel(application: Application): AndroidViewModel(applicati
             }else{
                 _loadCommentsProcess.value = result
             }
+        }
+    }
+
+    fun deletePost(postId: String){
+        viewModelScope.launch {
+            postRepository.deletePost(postId)
         }
     }
 }

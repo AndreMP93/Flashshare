@@ -1,6 +1,7 @@
 package com.example.flashshare.model
 
 import android.content.ClipDescription
+import android.net.Uri
 import com.example.flashshare.service.AppConstants
 import com.google.firebase.firestore.Exclude
 import java.io.Serializable
@@ -16,6 +17,8 @@ class PostModel() {
     lateinit var userData: UserModel
     @Exclude @get: Exclude
     var isLiked: Boolean = false
+    @Exclude @get: Exclude
+    var imageUri: Uri? = null
 
     constructor(postId: String, uId: String, urlPhoto: String, description: String, date: String):this(){
         this.id = postId

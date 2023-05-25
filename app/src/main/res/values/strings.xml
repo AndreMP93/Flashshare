@@ -43,6 +43,9 @@
     <string name="positive_button">Enviar</string>
     <string name="negative_button">Cancelar</string>
 
+    <string name="alert_dialog_warning">Aviso!</string>
+    <string name="alert_dialog_delete_post">Você quer excluir essa postagem?</string>
+
     <string name="error_get_user_data">Falha ao carregar os dados do Usuário</string>
     <string name="error_save_user_data">Falha ao salvar os dados do Usuário</string>
     <string name="error_login">Não foi possivel realizar o login, tente novamente mais tarde!</string>

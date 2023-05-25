@@ -61,6 +61,24 @@ class PostRepository {
         }
     }
 
+    suspend fun deletePost(postId: String): ResultModel<Unit> {
+        return suspendCoroutine { continuation ->
+            try {
+                getPostReference()
+                    .document(postId)
+                    .delete()
+                    .addOnSuccessListener {
+                        continuation.resume(ResultModel.Success(Unit))
+                    }
+                    .addOnFailureListener {
+                        continuation.resume(ResultModel.Error(it.message))
+                    }
+            } catch (e: Exception) {
+                continuation.resume(ResultModel.Error(e.message))
+            }
+        }
+    }
+
     suspend fun updatePost(postId: String, post: PostModel): ResultModel<Unit> {
         return suspendCoroutine { continuation ->
             try {

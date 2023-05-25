@@ -21,18 +21,29 @@ class PublicationPostViewModel(private val application: Application): AndroidVie
     private val _publicationProcess = MutableLiveData<ResultModel<Unit>>()
     val publicationProcess: LiveData<ResultModel<Unit>> = _publicationProcess
 
-    fun publicationPost(post: PostModel, image: Uri){
+    private val _loadPostProcess = MutableLiveData<ResultModel<PostModel>>()
+    val loadPostProcess: LiveData<ResultModel<PostModel>> = _loadPostProcess
+
+    fun publicationPost(post: PostModel){
         viewModelScope.launch {
-            _publicationProcess.value = ResultModel.Loading
-            val userId = sharedPreferences.get(AppConstants.SHARED.USER_ID)
-            if(userId!= ""){
-                post.userId = userId
-                _publicationProcess.value = postRepository.publicationPost(userId, post, image)
+            if(post.id == ""){
+                _publicationProcess.value = ResultModel.Loading
+                val userId = sharedPreferences.get(AppConstants.SHARED.USER_ID)
+                if(userId!= ""){
+                    post.userId = userId
+                    _publicationProcess.value = postRepository.publicationPost(userId, post, post.imageUri!!)
+                }else{
+                    _publicationProcess.value = ResultModel.Error(application.getString(R.string.error_message))
+                }
             }else{
-                _publicationProcess.value = ResultModel.Error(application.getString(R.string.error_message))
+                _publicationProcess.value = postRepository.updatePost(post.id, post)
             }
+        }
+    }
 
-
+    fun getPostData(postId: String){
+        viewModelScope.launch {
+            _loadPostProcess.value = postRepository.getPost(postId)
         }
     }
 }

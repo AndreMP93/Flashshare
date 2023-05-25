@@ -1,6 +1,7 @@
 package com.example.flashshare.activity
 
 import android.content.DialogInterface
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Spannable
@@ -41,13 +42,6 @@ class PostDetailsActivity : AppCompatActivity() {
         binding = ActivityPostDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if(friendId == ""){
-            binding.optionsPost.visibility = View.VISIBLE
-            binding.optionsPost.setOnClickListener {
-                setOptionMenuPost(binding.optionsPost)
-            }
-        }
-
         viewModel = ViewModelProvider(this)[PostDetailsViewModel::class.java]
 
         setRecyclerView()
@@ -60,6 +54,21 @@ class PostDetailsActivity : AppCompatActivity() {
 
         setButtons()
 
+        println("TESTE: $friendId  ${friendId is String}" )
+        if(friendId == null){
+            binding.optionsPost.visibility = View.VISIBLE
+            binding.optionsPost.setOnClickListener {
+                setOptionMenuPost(binding.optionsPost)
+            }
+        }
+
+    }
+
+    override fun onStart() {
+        if(postId != ""){
+            viewModel.getPost(postId)
+        }
+        super.onStart()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -102,17 +111,6 @@ class PostDetailsActivity : AppCompatActivity() {
             when (it) {
                 is ResultModel.Success -> {
                     viewModel.checkLikedPost(postId)
-                }
-
-                is ResultModel.Error -> {}
-                is ResultModel.Loading -> {}
-            }
-        }
-
-        viewModel.updatePostProcess.observe(this) {
-            when (it) {
-                is ResultModel.Success -> {
-
                 }
 
                 is ResultModel.Error -> {}
@@ -215,7 +213,7 @@ class PostDetailsActivity : AppCompatActivity() {
         alertDialogBuilder.setTitle(getString(R.string.comment))
         alertDialogBuilder.setMessage(getString(R.string.input_comment))
         alertDialogBuilder.setView(view.root)
-        alertDialogBuilder.setPositiveButton(getString(R.string.positive_button)) { dialog, which ->
+        alertDialogBuilder.setPositiveButton(getString(R.string.positive_button)) { _, _ ->
             if(commentModel == null){
                 val comment = CommentModel()
                 comment.description = view.commentEditText.text.toString()
@@ -227,7 +225,7 @@ class PostDetailsActivity : AppCompatActivity() {
             }
 
         }
-        alertDialogBuilder.setNegativeButton(getString(R.string.negative_button)) { dialog, which ->
+        alertDialogBuilder.setNegativeButton(getString(R.string.negative_button)) { dialog, _ ->
             dialog.dismiss()
         }
 
@@ -261,7 +259,7 @@ class PostDetailsActivity : AppCompatActivity() {
 
     private fun getPostDetails() {
         if (friendId != null && friendId != "") {
-            viewModel.getPost(friendId!!, postId)
+            viewModel.getPost(postId)
             viewModel.checkLikedPost(postId)
         } else {
             viewModel.getPost(postId)
@@ -280,6 +278,20 @@ class PostDetailsActivity : AppCompatActivity() {
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
     }
 
+    private fun showDeleteAlertDialog(){
+        AlertDialog.Builder(this)
+        .setTitle(getString(R.string.alert_dialog_warning))
+        .setMessage(getString(R.string.alert_dialog_delete_post))
+            .setPositiveButton(getString(R.string.positive_button)){_, _ ->
+                viewModel.deletePost(postId)
+                finish()
+            }
+            .setNegativeButton(getString(R.string.negative_button)){dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+
+    }
 
     private fun setOptionMenuPost(view: View){
         val popupMenu = PopupMenu(this , view)
@@ -288,11 +300,15 @@ class PostDetailsActivity : AppCompatActivity() {
             override fun onMenuItemClick(item: MenuItem?): Boolean {
                 when(item?.itemId){
                     R.id.delete_option -> {
-
+                        showDeleteAlertDialog()
                         return true
                     }
                     R.id.edit_option -> {
-
+                        val intent = Intent(applicationContext, PublicationPostActivity::class.java)
+                        val bundle = Bundle()
+                        bundle.putString(AppConstants.BUNDLE.POST_ID, postId)
+                        intent.putExtras(bundle)
+                        startActivity(intent)
                         return true
                     }
                 }
