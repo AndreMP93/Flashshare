@@ -29,17 +29,14 @@ class PostsFragment : Fragment() {
     private val pickGalleryImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let { selectedImageUri ->
-                showFilterActivity(selectedImageUri)
+                showPublicationPostActivity(selectedImageUri)
             }
         }
 
     private val takePictureLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success) {
-                binding.imageViewTeste.setImageURI(imageUri)
-                showFilterActivity(imageUri)
-            } else {
-
+                showPublicationPostActivity(imageUri)
             }
         }
 
@@ -118,7 +115,7 @@ class PostsFragment : Fragment() {
         takePictureLauncher.launch(imageUri)
     }
 
-    private fun showFilterActivity(image: Uri) {
+    private fun showPublicationPostActivity(image: Uri) {
         val intent = Intent(context, PublicationPostActivity::class.java)
         val bundle = Bundle().apply {
             putString(AppConstants.BUNDLE.IMAGE_URI_ID, image.toString())

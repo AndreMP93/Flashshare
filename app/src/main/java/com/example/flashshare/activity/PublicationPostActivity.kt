@@ -32,7 +32,7 @@ class PublicationPostActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[PublicationPostViewModel::class.java]
 
-        binding.filterToolBar.mainToolbar.setTitle(R.string.filterTitle)
+        binding.filterToolBar.mainToolbar.setTitle(R.string.posts)
         setSupportActionBar(binding.filterToolBar.mainToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
