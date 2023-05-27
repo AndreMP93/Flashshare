@@ -19,7 +19,7 @@ Este projeto é uma uma aplicação nativa Android de uma versão simplificada d
 
 ## Capturas de Tela
 
-<img src="screenshot/Login.png" alt="Login" width="250"/> <img src="screenshot/Register.png" alt="Register" width="250"/> <img src="screenshot/Home.png" alt="Home" width="250"/> <img src="screenshot/SearchUser.png" alt="SearchUser" width="250"/> <img src="screenshots/PublicationForm.png" alt="PublicationForm" width="250"/> <img src="screenshots/Profile.png" alt="Profile" width="250"/> <img src="screenshots/ProfileForm.png" alt="ProfileForm" width="250"/>
+<img src="screenshot/Login.png" alt="Login" width="250"/> <img src="screenshot/Register.png" alt="Register" width="250"/> <img src="screenshot/Home.png" alt="Home" width="250"/> <img src="screenshot/SearchUser.png" alt="SearchUser" width="250"/> <img src="screenshot/PublicationForm.png" alt="PublicationForm" width="250"/> <img src="screenshot/Profile.png" alt="Profile" width="250"/> <img src="screenshot/ProfileForm.png" alt="ProfileForm" width="250"/>
 
 ## Arquitetura
 O projeto segue a arquitetura MVVM (Model-View-ViewModel), que separa a lógica de negócio da interface do usuário. Ele é dividido em três camadas:
