@@ -172,20 +172,24 @@ class PostRepository {
                     val followingIDs = followResult.documents.map {
                         it.id
                     }
-                    db.collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
-                        .whereIn(AppConstants.FIRESTORE.USER_ID_KEY, followingIDs)
-                        .get()
-                        .addOnSuccessListener {feedResult ->
-                            val posts = mutableListOf<PostModel>()
-                            for(doc in feedResult.documents){
-                                val post = PostModel(doc.data as Map<String, Any>)
-                                posts.add(post)
+                    if(followingIDs.isNotEmpty()){
+                        db.collection(AppConstants.FIRESTORE.POSTS_COLLECTION)
+                            .whereIn(AppConstants.FIRESTORE.USER_ID_KEY, followingIDs)
+                            .get()
+                            .addOnSuccessListener {feedResult ->
+                                val posts = mutableListOf<PostModel>()
+                                for(doc in feedResult.documents){
+                                    val post = PostModel(doc.data as Map<String, Any>)
+                                    posts.add(post)
+                                }
+                                continuation.resume(ResultModel.Success(posts))
                             }
-                            continuation.resume(ResultModel.Success(posts))
-                        }
-                        .addOnFailureListener {
-                            continuation.resume(ResultModel.Error(it.message))
-                        }
+                            .addOnFailureListener {
+                                continuation.resume(ResultModel.Error(it.message))
+                            }
+                    }else{
+                        continuation.resume(ResultModel.Success(mutableListOf()))
+                    }
                 }
                 .addOnFailureListener {
                     continuation.resume(ResultModel.Error(it.message))

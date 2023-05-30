@@ -16,7 +16,7 @@ class FollowRepository {
     suspend fun getQuantityFollowers(userId: String): ResultModel<Int>{
         return suspendCoroutine {continuation ->
             try{
-                getFollowRef(userId)
+                getFollowerRef(userId)
                     .get()
                     .addOnSuccessListener {
                         continuation.resume(ResultModel.Success(it.documents.size))
@@ -34,7 +34,7 @@ class FollowRepository {
     suspend fun getQuantityFollowing(userId: String): ResultModel<Int>{
         return suspendCoroutine {continuation ->
             try{
-                getFollowRef(userId)
+                getFollowingRef(userId)
                     .get()
                     .addOnSuccessListener {
                         continuation.resume(ResultModel.Success(it.documents.size))
@@ -52,7 +52,7 @@ class FollowRepository {
     suspend fun checkFollowUser(userId: String, friendId: String): ResultModel<Boolean>{
         return suspendCoroutine { continuation ->
             try {
-                getFollowRef(userId)
+                getFollowingRef(userId)
                     .document(friendId)
                     .get()
                     .addOnCompleteListener {
@@ -71,11 +71,11 @@ class FollowRepository {
     suspend fun followUser(userId: String, friendId: String): ResultModel<Unit>{
         return suspendCoroutine { continuation ->
             try {
-                val refUser = getFollowRef(userId)
+                val refUser = getFollowingRef(userId)
                     .document(friendId)
                     .set(FollowModel(friendId))
 
-                val refFriend = getFollowRef(friendId)
+                val refFriend = getFollowerRef(friendId)
                     .document(userId)
                     .set(FollowModel(userId))
 
@@ -102,12 +102,12 @@ class FollowRepository {
     suspend fun unfollowUser(userId: String, friendId: String): ResultModel<Unit>{
         return suspendCoroutine { continuation ->
             try {
-                val refUser = getFollowRef(userId)
+                val refUser = getFollowingRef(userId)
                     .document(friendId)
                     .delete()
 
 
-                val refFriend = getFollowRef(friendId)
+                val refFriend = getFollowerRef(friendId)
                     .document(userId)
                     .delete()
 
@@ -131,9 +131,15 @@ class FollowRepository {
         }
     }
 
-    private fun getFollowRef(userId: String): CollectionReference {
+    private fun getFollowerRef(userId: String): CollectionReference {
         return db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
             .document(userId)
             .collection(AppConstants.FIRESTORE.FOLLOWERS_COLLECTION)
+    }
+
+    private fun getFollowingRef(userId: String): CollectionReference {
+        return db.collection(AppConstants.FIRESTORE.USER_COLLECTION)
+            .document(userId)
+            .collection(AppConstants.FIRESTORE.FOLLOWING_COLLECTION)
     }
 }
